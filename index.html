@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mission: Indigestible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;700&family=Titan+One&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a night-shift cleaning-crew HQ. Navy shell, sky-blue work floor, sponge-yellow and broom-orange for the two fiber teams. */
+:root{
+  --ink:#12263f; --ink2:#3d5370; --paper:#eef6fc; --card:#ffffff; --line:#c9dcec;
+  --carolina:#4b9cd3; --sky:#bfe1f7; --sponge:#f7c531; --broom:#f0803c; --gut:#f6b3a8; --crew:#4f9e45;
+  --good:#1f8a4c; --goodbg:#dff5e6; --bad:#c93a3a; --badbg:#fde4e1;
+  --display:"Titan One","Arial Black",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Verdana",system-ui,sans-serif;
+  --fs:17px; color-scheme:light;
+}
+html.sz1{--fs:19px} html.sz2{--fs:22px}
+html.dys{--body:"Lexend","Verdana",sans-serif;--display:"Lexend","Verdana",sans-serif}
+html.dys body{letter-spacing:.03em;word-spacing:.08em;line-height:1.7}
+html.hc{--ink:#000;--ink2:#1a1a1a;--paper:#fff;--card:#fff;--line:#000;--carolina:#005a9c;--sky:#fff;--good:#006b2d;--bad:#a80000;--goodbg:#fff;--badbg:#fff}
+html.hc .chip,html.hc .bin,html.hc .mcard,html.hc .btn,html.hc .panel{border-width:3px!important;border-color:#000!important}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:var(--fs)/1.5 var(--body);overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.1;margin:0;text-wrap:balance;letter-spacing:.01em}
+html.dys h1,html.dys h2,html.dys h3{font-weight:700}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:4px solid #ff8a00;outline-offset:3px;border-radius:6px}
+img{max-width:100%}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+svg{display:block}
+
+/* ---------- top bar ---------- */
+#bar{position:sticky;top:0;z-index:30;background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px;padding:8px 18px;flex-wrap:wrap}
+#bar .logo{display:flex;align-items:center;gap:10px;background:none;border:0;color:#fff;padding:2px 6px}
+#bar .logo b{font-family:var(--display);font-weight:400;font-size:1.25rem;letter-spacing:.02em}
+#bar .logo b i{font-style:normal;color:var(--sponge)}
+#bar .sp{flex:1}
+.pill{background:#1e3a5c;border-radius:99px;padding:5px 14px;font-size:.9rem;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pill b{color:var(--sponge);font-variant-numeric:tabular-nums}
+.ib{background:#1e3a5c;border:2px solid transparent;color:#fff;border-radius:12px;padding:7px 12px;display:flex;align-items:center;gap:7px;font-size:.9rem}
+.ib:hover{border-color:var(--sky)} .ib svg{width:20px;height:20px}
+html.hc #bar{background:#000}
+
+#bar,main,#a11y{zoom:var(--z,1)}
+main{max-width:1280px;margin:0 auto;padding:18px 18px 60px}
+.screen{display:none} .screen.on{display:block}
+
+/* ---------- buttons, cards ---------- */
+.btn{background:var(--carolina);color:#fff;border:0;border-bottom:5px solid #2f77a8;border-radius:16px;padding:12px 24px;font-family:var(--display);font-size:1.15rem;letter-spacing:.03em;transition:transform .12s}
+.btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(2px);border-bottom-width:2px}
+.btn.yellow{background:var(--sponge);color:var(--ink);border-bottom-color:#c9990e}
+.btn.orange{background:var(--broom);border-bottom-color:#b9571c}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);border-bottom-width:5px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.sm{font-size:.95rem;padding:8px 16px;border-radius:12px}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:20px}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:stretch}
+.row>*{min-width:0}
+.center{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* ---------- welcome ---------- */
+#welcome{position:relative}
+.hero{position:relative;border-radius:28px;overflow:hidden;min-height:540px;background:#5b2330 center/cover;display:flex;align-items:flex-end;box-shadow:0 14px 0 var(--ink)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,38,63,.1) 0%,rgba(18,38,63,.25) 40%,rgba(18,38,63,.93) 82%)}
+.hero-in{position:relative;z-index:2;padding:28px 34px 30px;width:100%;color:#fff;display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap}
+.hero h1{font-size:clamp(2.6rem,7vw,5.2rem);text-shadow:0 5px 0 var(--ink);line-height:.95}
+.hero h1 span{display:block;color:var(--sponge)}
+.hero h1 small{display:block;font-family:var(--body);font-weight:700;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;text-shadow:none;margin-bottom:10px;color:var(--sky)}
+.hero .tag{max-width:46ch;margin-top:12px;font-size:1.05rem}
+.clock{background:#fff;color:var(--ink);border-radius:20px;padding:18px;width:320px;max-width:100%;border:4px solid var(--ink);box-shadow:0 8px 0 var(--ink)}
+.clock h2{font-size:1.25rem;margin-bottom:4px}
+.clock label{font-size:.9rem;color:var(--ink2);display:block;margin-bottom:8px}
+.clock input{width:100%;font:inherit;font-size:1.15rem;padding:10px 12px;border:3px solid var(--ink);border-radius:12px;margin-bottom:12px;background:#fffbe9}
+.clock .btn{width:100%}
+.hero .floaty{position:absolute;z-index:1;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(255,255,255,.08) 60%);animation:rise linear infinite}
+@keyframes rise{from{transform:translateY(40px) scale(.6);opacity:0}15%{opacity:.9}to{transform:translateY(-560px) scale(1.15);opacity:0}}
+.hero .duo{position:absolute;z-index:2;top:22px;right:26px;display:flex;gap:6px}
+.hero .duo img{width:150px;height:150px;object-fit:contain;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 0 rgba(18,38,63,.55))}
+.hero .duo img:last-child{animation-delay:-1.2s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(5deg)}}
+/* garage door entrance */
+#door{position:fixed;inset:0;z-index:80;display:none;pointer-events:none}
+#door.go{display:block}
+#door .slats{position:absolute;inset:0;background:#1b3554 url(img/door.webp) center/cover no-repeat;text-shadow:0 3px 0 #0b1a2c,0 0 18px #0b1a2c;transform:translateY(-100%);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center}
+#door.go .slats{animation:door 2.6s cubic-bezier(.6,0,.3,1) forwards}
+@keyframes door{0%{transform:translateY(-100%)}28%{transform:translateY(0)}32%{transform:translateY(-1.5%)}36%,70%{transform:translateY(0)}100%{transform:translateY(-103%)}}
+#door h2{font-size:clamp(2rem,6vw,4rem);color:var(--sponge);text-shadow:0 4px 0 #0b1a2c}
+#door p{font-size:1.3rem;margin-top:10px}
+#door .stamp{text-shadow:none;background:rgba(11,26,44,.7);margin-top:18px;border:5px solid #7be08f;color:#7be08f;font-family:var(--display);font-size:1.6rem;padding:6px 20px;border-radius:10px;transform:rotate(-7deg) scale(0);animation:stamp .35s 1s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stamp{to{transform:rotate(-7deg) scale(1)}}
+
+/* ---------- HQ ---------- */
+.hq-top{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;margin-bottom:18px;min-height:250px;padding:22px 26px;border:3px solid var(--ink);border-radius:24px;background:#12263f right center/cover no-repeat;color:#fff}
+.hq-top::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,38,63,.94) 0%,rgba(18,38,63,.82) 30%,rgba(18,38,63,0) 58%)}
+.hq-top>*{position:relative}
+.hq-top h1{font-size:2.6rem;color:var(--sponge)}
+.hq-top .who{max-width:40ch}
+.hq-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.rank{display:flex;align-items:center;gap:12px;background:var(--ink);color:#fff;border-radius:18px;padding:10px 16px;border:2px solid #31517a}
+.rank svg{width:52px;height:52px}
+.rank b{font-family:var(--display);font-weight:400;font-size:1.2rem;color:var(--sponge);display:block}
+.meter{height:10px;background:#31517a;border-radius:9px;overflow:hidden;width:170px;margin-top:5px}
+.meter i{display:block;height:100%;background:var(--sponge);border-radius:9px;transition:width .6s}
+.floor{border-radius:24px;padding:18px;margin-bottom:18px;border:3px solid var(--ink);background:var(--card);position:relative}
+.floor.l1{background:#e3f2fc} .floor.l2{background:#fff6d6} .floor.l3{background:#ffe8da} .floor.l0{background:#e4f4df}
+html.hc .floor{background:#fff}
+.floor-h{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.lvl{font-family:var(--display);background:var(--ink);color:#fff;border-radius:14px;padding:8px 14px;font-size:1.05rem;white-space:nowrap}
+.lvl small{font-family:var(--body);font-weight:700;color:var(--sponge);margin-left:6px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
+.ican{flex:1;min-width:260px;font-size:.98rem}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.mcard{max-width:470px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 0 var(--ink);transition:transform .15s,box-shadow .15s;position:relative}
+.mcard:hover{transform:translateY(-4px) rotate(-.6deg);box-shadow:0 10px 0 var(--ink)}
+.mcard .art{height:104px;border-radius:14px;background:var(--sky);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mcard .art :is(svg,img){height:96px;width:auto}
+.mcard:hover .art :is(svg,img){animation:wig .6s ease-in-out}
+@keyframes wig{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg) scale(1.08)}65%{transform:rotate(7deg) scale(1.08)}}
+.mcard h3{font-size:1.25rem}
+.mcard p{font-size:.88rem;color:var(--ink2)}
+.stars{display:flex;gap:3px} .stars svg{width:22px;height:22px}
+.mcard .done{position:absolute;top:-10px;right:-8px;background:var(--good);color:#fff;border-radius:99px;font-size:.75rem;font-weight:700;padding:4px 10px;border:3px solid var(--ink);transform:rotate(6deg)}
+.mcard .kind{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--carolina)}
+
+/* ---------- mission stage ---------- */
+.mhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.mhead h1{font-size:1.8rem;flex:1;min-width:200px}
+.pnav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pcount{font-weight:700;font-size:.9rem;white-space:nowrap}
+.dots{display:flex;gap:6px} .dots i{width:26px;height:10px;border-radius:9px;background:var(--line)} .dots i.on{background:var(--carolina)} .dots i.now{background:var(--sponge);outline:2px solid var(--ink)}
+.score{font-family:var(--display);background:var(--ink);color:var(--sponge);border-radius:12px;padding:6px 14px}
+#stage{min-height:420px}
+.brief{background:var(--ink);color:#fff;border-radius:20px;padding:16px 20px;margin-bottom:16px;display:flex;gap:16px;align-items:center}
+.brief h2{font-size:1.35rem;color:var(--sponge);margin-bottom:4px}
+.brief p{max-width:72ch}
+.brief .who{flex:none;width:92px} .brief .who :is(svg,img){width:92px;height:92px;object-fit:contain;animation:bob 2.6s ease-in-out infinite}
+.brief .txt{flex:1}
+.listen{display:none;background:#1e3a5c;color:#fff;border:2px solid var(--sky);border-radius:10px;padding:6px 10px;font-size:.85rem;flex:none}
+html.read .listen{display:inline-flex;gap:6px;align-items:center}
+.fb{margin-top:12px;border-radius:14px;padding:10px 16px;font-weight:700;min-height:46px;display:flex;align-items:center;gap:10px}
+.fb.ok{background:var(--goodbg);color:var(--good);border:2px solid var(--good)}
+.fb.no{background:var(--badbg);color:var(--bad);border:2px solid var(--bad)}
+.fb svg{width:24px;height:24px;flex:none}
+.donebar{margin-top:16px;background:var(--goodbg);border:3px solid var(--good);border-radius:20px;padding:14px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;animation:pop .4s cubic-bezier(.3,1.5,.5,1)}
+.donebar p{flex:1;min-width:220px;font-weight:700;color:#155c33}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.shake{animation:shake .4s} @keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* chips / bins / cloze / order */
+.tray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:54px;padding:10px;border:3px dashed var(--line);border-radius:18px;background:#fff}
+.chip{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px 14px;box-shadow:0 4px 0 var(--ink);font-weight:700;display:inline-flex;align-items:center;gap:8px;text-align:left;max-width:300px;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.chip :is(svg,img){width:50px;height:50px;flex:none;object-fit:contain}
+.chip.sel{background:var(--sponge);transform:translateY(-4px) rotate(-2deg)}
+.chip.ok{background:var(--goodbg);border-color:var(--good);box-shadow:none;cursor:default;animation:pop .3s}
+.chip.small{font-size:.85rem;padding:5px 10px;box-shadow:none;border-width:2px}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
+.bin{border:3px solid var(--ink);border-radius:20px;background:var(--sky);padding:12px;min-height:150px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .12s,background .2s}
+.bin:hover,.bin.over{transform:scale(1.02);background:#fff3c4}
+.bin strong{font-family:var(--display);font-weight:400;font-size:1.1rem;text-align:center}
+html.dys .bin strong{font-weight:700}
+.bin small{font-size:.8rem;color:var(--ink2);text-align:center}
+.bin-art :is(svg,img){height:74px;width:auto;max-width:100%}
+.bin-art img{height:118px}
+.bin-art svg[role=img]{height:136px}
+.bin-in{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.bin.sponge{background:#fff1b8} .bin.broom{background:#ffdcc4}
+.hint{font-size:.88rem;color:var(--ink2);text-align:center;margin:8px 0}
+.cloze{font-size:1.2rem;line-height:2.5;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:16px 22px;margin-bottom:14px}
+.blank{display:inline-block;min-width:130px;border:0;border-bottom:4px solid var(--carolina);background:#e9f4fc;border-radius:8px 8px 0 0;padding:0 10px;font-weight:700;color:#1b5e8f;line-height:1.7;text-align:center}
+.blank.now{background:var(--sponge);border-color:var(--ink)} .blank.ok{background:var(--goodbg);border-color:var(--good);color:var(--good)}
+.chain{list-style:none;padding:0;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:58px;border:3px dashed var(--line);border-radius:18px;padding:10px;background:#fff}
+.chain li{background:var(--goodbg);border:3px solid var(--good);border-radius:14px;padding:8px 12px;font-weight:700;animation:pop .3s;max-width:260px}
+.chain li+li::before{content:"";display:inline-block;width:0;height:0;border:8px solid transparent;border-left-color:var(--good);margin-right:6px;vertical-align:middle}
+.chain:empty::after{content:"Tap the step that happens first";color:var(--ink2);font-style:italic}
+.opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:12px}
+.opt{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:12px 14px;text-align:left;font-weight:700;box-shadow:0 4px 0 var(--ink)}
+.opt:hover{background:#fff8dc} .opt.ok{background:var(--goodbg);border-color:var(--good);box-shadow:none} .opt.no{background:var(--badbg);border-color:var(--bad);opacity:.6;box-shadow:none}
+.q{font-size:1.15rem;font-weight:700;margin-top:6px}
+
+/* result */
+.result{text-align:center;padding:30px 20px}
+.result h2{font-size:2.6rem;margin:10px 0}
+.result .stars{justify-content:center} .result .stars svg{width:70px;height:70px;animation:pop .5s backwards}
+.result .stars svg:nth-child(2){animation-delay:.2s}.result .stars svg:nth-child(3){animation-delay:.4s}
+.cheer{display:flex;justify-content:center;gap:10px;margin-bottom:6px}.cheer img{height:150px;width:auto;animation:bob 1.2s ease-in-out infinite}.cheer img:last-child{animation-delay:-.6s}
+.result .big{font-family:var(--display);font-size:1.4rem;margin:8px 0 18px}
+
+/* accessibility drawer */
+#a11y{position:fixed;top:0;right:0;bottom:0;width:340px;max-width:92vw;background:#fff;z-index:60;border-left:4px solid var(--ink);padding:20px;transform:translateX(105%);transition:transform .25s;overflow:auto}
+#a11y.on{transform:none}
+#a11y h2{font-size:1.5rem;margin-bottom:12px}
+.tog{display:flex;align-items:center;gap:12px;width:100%;background:#f1f7fc;border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;text-align:left}
+.tog i{flex:none;width:46px;height:26px;border-radius:20px;background:#9bb1c7;position:relative;transition:background .2s}
+.tog i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}
+.tog[aria-pressed=true] i{background:var(--good)} .tog[aria-pressed=true] i::after{left:23px}
+.tog b{display:block}.tog small{color:var(--ink2);font-size:.82rem}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+
+/* ---------- mission-specific ---------- */
+/* M1 conveyor */
+.belt{position:relative;background:linear-gradient(#dff0fb,#cfe6f6);border:3px solid var(--ink);border-radius:20px;overflow:hidden;padding:46px 10px 6px}
+.rig{position:relative;width:min(100%,600px);margin:0 auto}
+.rig .mach{display:block;width:100%;height:auto}
+.rig .mach.chomp{animation:chomp .25s 4}
+@keyframes chomp{50%{transform:scaleY(.9) scaleX(1.06)}}
+.belt .item{position:absolute;top:calc(64% - 62px);left:3%;width:64px;height:64px;z-index:2;transition:left 1s ease-in,transform 1s ease-in,opacity .35s .65s}
+.belt .item :is(svg,img){width:64px;height:64px;object-fit:contain}
+.belt .item.in{left:calc(51% - 32px);transform:scale(.4);opacity:0}
+.belt .item.out{left:86%;transform:none;opacity:1;z-index:4;transition:left 1s ease-out,transform .6s,opacity .3s}
+.belt .cal{position:absolute;right:14px;top:10px;background:var(--ink);color:#fff;border-radius:12px;padding:6px 12px;font-weight:700;z-index:5}
+.belt .cal b{color:var(--sponge);font-family:var(--display);font-weight:400;font-size:1.2rem}
+.belt .lbl{position:absolute;left:14px;top:10px;background:#fff;border:3px solid var(--ink);border-radius:12px;padding:5px 12px;font-weight:700;z-index:5}
+.spark{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--sponge);z-index:6;animation:spark .8s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.floatup{position:absolute;z-index:7;font-family:var(--display);font-size:1.5rem;animation:floatup 1.2s ease-out forwards;pointer-events:none;text-shadow:0 2px 0 #fff}
+@keyframes floatup{to{transform:translateY(-70px);opacity:0}}
+/* M2 structures */
+.mol{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px;text-align:center}
+.mol svg{width:100%;height:150px}
+.bead{animation:bead 2.4s ease-in-out infinite} @keyframes bead{50%{transform:translateY(-2.5px)}}
+.stampd{font-family:var(--display);border:4px solid;border-radius:10px;padding:3px 10px;display:inline-block;transform:rotate(-6deg);animation:pop .3s;margin-top:6px}
+.stampd.y{color:var(--good)} .stampd.n{color:var(--bad)}
+/* M3 hexes */
+.lab{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:18px;position:relative;overflow:hidden}
+.hexrow{display:flex;align-items:center;justify-content:center;gap:0;min-height:150px;flex-wrap:nowrap}
+.hex{width:92px;height:82px;flex:none;position:relative;transition:margin .7s,transform .7s}
+.hex::before{content:"";position:absolute;inset:0;background:var(--carolina);clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.hex::after{content:"glucose";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem}
+
+.hex.b::before{background:#e8693a}.hex.b.inv::before{background:#b9471d;transform:scaleY(-1)}
+.hex .stub{position:absolute;left:62%;top:-14px;width:4px;height:16px;background:var(--ink);border-radius:2px}
+.hex .stub::after{content:"";position:absolute;left:-5px;top:-11px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-sizing:border-box}
+.hex.inv .stub{top:auto;bottom:-14px}.hex.inv .stub::after{top:auto;bottom:-11px}
+.atom{position:absolute;background:#fff;border:3px solid var(--ink);border-radius:10px;padding:2px 8px;font-weight:700;font-size:.95rem;z-index:2;box-shadow:0 3px 0 var(--ink)}
+.atom.sel{background:var(--sponge)} .atom.gone{transition:all .7s;opacity:0;transform:translateY(60px) scale(.3)}
+.gap{width:120px;flex:none;position:relative;height:82px;transition:width .7s}
+.gap.joined{width:34px}
+.gap .o{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);background:var(--sponge);border:3px solid var(--ink);border-radius:50%;width:30px;height:30px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform .4s .5s}
+.gap.joined .o{transform:translate(-50%,-50%) scale(1)}
+.drop{position:absolute;z-index:8;animation:dropfall 1.6s ease-in forwards;width:60px}
+@keyframes dropfall{0%{transform:scale(0)}25%{transform:scale(1.2)}45%{transform:scale(1)}100%{transform:translateY(190px) scale(.8);opacity:0}}
+.bond{flex:none;width:44px;height:60px;background:none;border:0;position:relative;transition:all .5s}
+.bond svg{width:44px;height:60px}
+.bond.broken{width:70px;opacity:.25;pointer-events:none}
+.bond:hover{transform:scale(1.15)}
+.enz{position:absolute;width:92px;height:92px;z-index:9;pointer-events:none;transition:left .35s,top .35s}
+.enz img{width:100%;height:100%;object-fit:contain}
+.enz.bite img{animation:bite .18s 3} @keyframes bite{50%{transform:scale(1.25) rotate(-12deg)}}
+.enz.bonk{animation:bonk .5s} @keyframes bonk{30%{transform:translate(-26px,-18px) rotate(-30deg)}60%{transform:translate(8px,4px)}}
+.energy{display:flex;align-items:center;gap:10px;font-weight:700;margin-top:8px}
+.energy .meter{width:220px;height:16px;background:var(--line)} .energy .meter i{background:var(--good)}
+/* M4 beakers & flip cards */
+.flip{perspective:1000px;flex:1;min-width:250px;max-width:420px;height:400px;background:none;border:0;padding:0}
+.flip .in{display:block;position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .bk{position:absolute;inset:0;backface-visibility:hidden;border:4px solid var(--ink);border-radius:22px;overflow:hidden;box-shadow:0 8px 0 var(--ink)}
+.flip .f{background:#000 center/cover;display:flex;align-items:flex-end}
+.flip .f span{background:var(--ink);color:#fff;width:100%;padding:10px;font-family:var(--display);font-size:1.3rem;text-align:center}
+.flip .bk{transform:rotateY(180deg);padding:16px;text-align:left;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.flip .bk h3{font-size:1.5rem} .flip .bk ul{margin:0;padding-left:20px} .flip .bk li{margin-bottom:5px}
+html.calm .flip .in{transition:none}
+.beakers{display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+.bk-wrap{text-align:center}
+.beaker{width:190px;height:220px;border:5px solid var(--ink);border-top:0;border-radius:0 0 26px 26px;position:relative;overflow:hidden;background:#fff;margin:26px auto 10px}
+.beaker .water{position:absolute;left:0;right:0;bottom:0;height:70%;background:#a9dcf8;transition:background 2s,height 2s}
+.beaker .water::before{content:"";position:absolute;left:-20%;right:-20%;top:-8px;height:16px;background:inherit;border-radius:50%;animation:slosh 2.5s ease-in-out infinite}
+@keyframes slosh{50%{transform:translateX(8%) rotate(1.5deg)}}
+.beaker.gel .water{background:#e7c964;height:78%}
+.beaker.gel .water::before{animation-duration:7s}
+.beaker .bit{position:absolute;width:16px;height:9px;background:#9a6a35;border-radius:3px;top:-12px;transition:top 1.6s cubic-bezier(.4,0,.6,1),opacity 1.5s 1.2s,transform 1.6s}
+.beaker.gel .bit{opacity:0}
+.beaker .wob{position:absolute;inset:auto 0 0 0;height:78%;display:none;align-items:center;justify-content:center;font-family:var(--display);color:#6b5206;font-size:1.3rem}
+.beaker.gel .wob{display:flex;animation:jig 1.2s ease-in-out infinite} @keyframes jig{50%{transform:skewX(4deg) scaleY(.97)}}
+/* M4 rapid */
+.rapid{display:grid;grid-template-columns:1fr minmax(240px,2fr) 1fr;gap:14px;align-items:center}
+.rapid .side{border:4px solid var(--ink);border-radius:22px;padding:14px;text-align:center;background:#fff1b8;box-shadow:0 6px 0 var(--ink)}
+.rapid .side.r{background:#ffdcc4}
+.rapid .side img{height:112px;width:auto;margin:0 auto;display:block}
+.rapid .side b{font-family:var(--display);font-weight:400;font-size:1.2rem;display:block}
+.rapid .side kbd{display:inline-block;border:2px solid var(--ink);border-radius:6px;padding:0 8px;font:700 .9rem var(--body);background:#fff;margin-top:4px}
+.rcard{background:#fff;border:4px solid var(--ink);border-radius:22px;padding:22px;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.25rem;font-weight:700;box-shadow:0 8px 0 var(--ink)}
+.rcard.in{animation:dealin .35s} @keyframes dealin{from{transform:translateY(-60px) rotate(-6deg);opacity:0}}
+.rcard.goL{animation:goL .4s forwards} .rcard.goR{animation:goR .4s forwards}
+@keyframes goL{to{transform:translateX(-140%) rotate(-18deg);opacity:0}} @keyframes goR{to{transform:translateX(140%) rotate(18deg);opacity:0}}
+.streak{text-align:center;font-family:var(--display);font-size:1.1rem;margin-top:10px;min-height:1.6em}
+/* M5 go fish */
+.gf{display:grid;gap:12px}
+.gf-opp{display:flex;gap:14px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:10px 14px}
+.gf-opp .face{width:120px;flex:none} .gf-opp .face img{width:120px;height:120px;object-fit:contain;display:block}
+.gf-opp .face.talk img{animation:wig .6s}
+.bubble{flex:1;background:var(--sky);border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-weight:700;min-height:60px;position:relative}
+.backs{display:flex} .backs i{width:30px;height:42px;border-radius:6px;border:2px solid var(--ink);background:repeating-linear-gradient(45deg,var(--carolina) 0 6px,#fff 6px 12px);margin-left:-14px}
+.gf-mid{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+.pond{background:radial-gradient(circle at 40% 35%,#8fd0f4,#3f8fc6);border:4px solid var(--ink);border-radius:50%;width:150px;height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:var(--display);text-shadow:0 2px 0 var(--ink);position:relative}
+.pond.rip::after{content:"";position:absolute;inset:8px;border:4px solid #fff;border-radius:50%;animation:rip .8s ease-out}
+@keyframes rip{from{transform:scale(.2);opacity:1}to{transform:scale(1.2);opacity:0}}
+.tally{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:8px 16px;text-align:center;font-weight:700}
+.tally b{font-family:var(--display);font-weight:400;font-size:1.7rem;display:block;color:var(--carolina)}
+.hand{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:20px;background:#d5e9f7;border:3px solid var(--ink);min-height:150px}
+.card{width:168px;min-height:130px;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:9px;font-size:.9rem;font-weight:700;display:flex;flex-direction:column;gap:4px;text-align:left;box-shadow:0 5px 0 var(--ink);transition:transform .15s;line-height:1.25}
+.card:hover{transform:translateY(-6px) rotate(-1.5deg)}
+.card em{font-style:normal;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;border-radius:6px;padding:1px 6px;align-self:flex-start}
+.card.t em{background:var(--carolina)} .card.d em{background:var(--broom)}
+.card.t{background:#f1f8fe;font-size:1.02rem;font-family:var(--display);font-weight:400} html.dys .card.t{font-weight:700}
+.card.sel{background:var(--sponge);transform:translateY(-10px)} .card.new{animation:dealin .5s}
+.card.glow{outline:5px solid var(--good)}
+.gf-ask{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:14px}
+/* M6 */
+.graph{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:10px}
+.graph svg{width:100%;height:auto}
+.slider{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#fff1b8;border:3px solid var(--ink);border-radius:18px;padding:12px 16px;margin-top:12px}
+.slider input{flex:1;min-width:200px;accent-color:var(--broom);height:30px}
+.slider b{font-family:var(--display);font-weight:400;font-size:1.5rem;min-width:3.2em;text-align:right}
+canvas.game{width:100%;height:auto;border:4px solid var(--ink);border-radius:20px;background:#f9c9bf;touch-action:none;display:block}
+.bars{display:flex;gap:22px;align-items:flex-end;justify-content:center;height:170px;margin-top:10px}
+.bars div{width:120px;text-align:center;font-weight:700;font-size:.85rem}
+.bars i{display:block;background:var(--bad);border:3px solid var(--ink);border-radius:10px 10px 0 0;transition:height 1s;margin-bottom:4px}
+.bars div:last-child i{background:var(--good)}
+.colon{position:relative;margin:36px auto 10px;max-width:900px}
+.colon .tube{aspect-ratio:1700/535;display:grid;grid-template-columns:repeat(6,1fr)}
+.seg{background:url(img/colon.webp) 0 0/600% 100% no-repeat;border:0;transition:transform .25s,filter .2s;cursor:pointer;position:relative;padding:0}
+.seg:nth-child(2){background-position:20% 0}.seg:nth-child(3){background-position:40% 0}.seg:nth-child(4){background-position:60% 0}.seg:nth-child(5){background-position:80% 0}.seg:nth-child(6){background-position:100% 0}
+.seg.sq{transform:scaleY(.6)}
+.seg.target{filter:brightness(1.1)}
+.seg.target::after{content:"";position:absolute;inset:10% 6%;border:5px dashed var(--sponge);border-radius:45%;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.seg span{position:absolute;left:0;right:0;top:-26px;font-size:.75rem;font-weight:700;color:var(--ink2)}
+.bolus{position:absolute;top:50%;width:16.66%;display:flex;justify-content:center;transition:left .5s ease-in-out;transform:translateY(-50%);pointer-events:none;z-index:3}
+.bolus i{display:block;background:#8a5a2b;border:3px solid #4d2f12;border-radius:46%;transition:width .5s,height .5s}
+.gauge{display:flex;align-items:center;gap:10px;font-weight:700;flex-wrap:wrap}
+.gauge .meter{width:200px;height:18px;background:var(--line)} .gauge .meter i{background:var(--broom)}
+/* M7 tickets */
+.ticket{background:#fffdf2;border:3px solid var(--ink);border-radius:6px 22px 22px 6px;border-left:14px solid var(--broom);padding:14px 18px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.ticket .cust{width:150px;flex:none;align-self:flex-end;margin-bottom:-14px}.ticket .cust img{width:100%;height:auto;display:block}
+.ticket h3{font-size:1.3rem} .ticket .t{flex:1;min-width:260px}
+.ticket .viz{width:260px;flex:none;max-width:100%} .ticket .viz :is(svg,img){width:100%;height:auto;display:block}
+.ticket .no{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--broom)}
+/* M8 */
+.clues{display:grid;gap:8px}
+.clue{display:flex;gap:12px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:9px 14px;font-weight:700;animation:dealin .4s}
+.clue .pts{flex:none;width:48px;height:48px;border-radius:50%;background:var(--sponge);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.3rem}
+.clue.lock{opacity:.4;border-style:dashed;animation:none;font-weight:400;font-style:italic}
+.clue.lock .pts{background:#dde7f0}
+.bank{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px}
+.bank .opt{text-align:center;padding:9px 6px;font-size:.95rem} .bank .opt:disabled{opacity:.35;text-decoration:line-through}
+/* debrief */
+.evi{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px}
+@media(max-width:820px){.evi{grid-template-columns:1fr}.rapid{grid-template-columns:1fr 1fr}.rapid .rcard{grid-column:1/-1;grid-row:1}}
+#evc{width:100%;height:auto;border:3px solid var(--ink);border-radius:12px;background:#fff}
+textarea{width:100%;min-height:110px;font:inherit;border:3px solid var(--ink);border-radius:14px;padding:10px;background:#fffbe9}
+.note{font-size:.88rem;color:var(--ink2)}
+.lvlrow{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:2px dashed var(--line)}
+.lvlrow b{flex:1} .tagp{border-radius:99px;padding:3px 12px;font-weight:700;font-size:.85rem;border:2px solid}
+.tagp.y{background:var(--goodbg);color:var(--good)} .tagp.n{background:#fff4d1;color:#8a6200}.tagp.z{background:#eef2f6;color:var(--ink2)}
+
+html.calm *,html.calm *::before,html.calm *::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
+@media (prefers-reduced-motion:reduce){.hero .floaty,.bead,.hero .duo img,.brief .who img,.cheer img{animation:none}}
+@media(max-width:640px){.hero-in{padding:20px}.hero .duo img{width:84px;height:84px}.brief .who{display:none}.hq-top::before{background:rgba(18,38,63,.85)}}
+
+</style>
+</head>
+<body>
+<header id="bar"><button class="logo" id="homeBtn" aria-label="Go to Crew HQ"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#4b9cd3" stroke="#fff" stroke-width="3"/><rect x="21.5" y="7" width="5" height="19" rx="2.5" fill="#b9784a" stroke="#12263f" stroke-width="2"/><path d="M13 25h22l4 15H9z" fill="#f7c531" stroke="#12263f" stroke-width="2.4" stroke-linejoin="round"/><path d="M15 34v5M21 35v5M27 35v5M33 34v5" stroke="#12263f" stroke-width="2" stroke-linecap="round"/></svg><b>Mission: <i>Indigestible</i></b></button><span class="sp"></span><span class="pill">Crew member <b id="who">Recruit</b></span><span class="pill">Shine <b id="shine">0</b></span><button class="ib" id="snd" aria-pressed="true"></button><button class="ib" id="a11yBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.5" fill="currentColor"/><path d="M4 8.5l8 1.5 8-1.5M12 10v5l-3.5 6M12 15l3.5 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Accessibility</span></button></header>
+<main>
+<section class="screen" id="welcome"></section>
+<section class="screen" id="hq"></section>
+<section class="screen" id="mission"><div class="mhead" id="mhead"></div><div id="stage"></div></section>
+<section class="screen" id="debrief"></section>
+</main>
+<aside id="a11y" aria-hidden="true" aria-label="Accessibility settings" inert></aside>
+<div id="door" aria-hidden="true"><div class="slats"><h2>Clocked in!</h2><p>Welcome to the crew, <b id="doorName"></b></p><div class="stamp">NIGHT SHIFT: ON DUTY</div></div></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div id="live" class="sr" aria-live="polite"></div>
+<script>
+/* ===== Mission: Indigestible — core ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const h=html=>{const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild};
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const wait=ms=>new Promise(r=>setTimeout(r,document.documentElement.classList.contains('calm')?Math.min(ms,250):ms));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CF='"Atkinson Hyperlegible",Arial,sans-serif';
+const IMG={crew:'img/crew.jpg',lego:'img/lego.jpg',soluble:'img/soluble.jpg',insoluble:'img/insoluble.jpg'};
+const pic=(n,alt='')=>`<img class="ch" src="img/${n}.webp" alt="${alt}" draggable="false">`;
+
+/* ---------- saved progress (this device) ---------- */
+const KEY='missionIndigestible.v1';
+const SET0={size:0,hc:false,dys:false,calm:false,read:false,sound:false,sv:2};
+let S={name:'',m:{},topics:{},reflect:'',set:{...SET0}};
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){S=Object.assign(S,d);S.set=Object.assign({...SET0},d.set||{});if(!d.set||d.set.sv!==2){S.set.sound=false;S.set.sv=2}}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- topics tie every graded move to a proficiency level ---------- */
+const TOPICS={
+  'What fiber is':1,'Starch, glycogen and cellulose':1,'Glycosidic bonds and digestion':1,
+  'Soluble vs. insoluble fiber':2,'Fiber food sources':2,'Key vocabulary':2,
+  'Blood sugar and insulin':3,'Cholesterol and heart health':3,'Peristalsis and constipation':3,'Explaining fiber and health':3};
+
+/* ---------- sound: soft mallet notes, bubble pops and filtered noise, mixed quietly ---------- */
+let AC,master,nbuf;
+function ac(){if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended'&&AC.resume){const r=AC.resume();if(r&&r.catch)r.catch(()=>{})}
+  if(!master||master.context!==AC){master=AC.createGain();master.gain.value=.6;master.connect(AC.destination);nbuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=nbuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}return AC}
+const snd=fn=>{if(!S.set.sound)return;try{fn(ac())}catch(e){}};
+/* a marimba-like note: sine body plus a short bright overtone */
+function note(f,{t=0,d=.4,v=.2,type='sine',bright=.3}={}){snd(a=>{const t0=a.currentTime+t,g=a.createGain(),o=a.createOscillator();g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+.006);g.gain.exponentialRampToValueAtTime(.0006,t0+d);o.type=type;o.frequency.setValueAtTime(f,t0);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.05);
+  if(bright){const g2=a.createGain(),o2=a.createOscillator();g2.gain.setValueAtTime(v*bright,t0);g2.gain.exponentialRampToValueAtTime(.0006,t0+d*.3);o2.frequency.setValueAtTime(f*4,t0);o2.connect(g2);g2.connect(master);o2.start(t0);o2.stop(t0+d*.35)}})}
+/* a pitch glide: rising for a bubble pop, falling for a soft thud */
+function glide(f1,f2,{t=0,d=.1,v=.2,type='sine'}={}){snd(a=>{const t0=a.currentTime+t,g=a.createGain(),o=a.createOscillator();o.type=type;o.frequency.setValueAtTime(f1,t0);o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+.008);g.gain.exponentialRampToValueAtTime(.0006,t0+d+.04);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.08)})}
+/* filtered noise: ticks, whooshes and water */
+function hiss({t=0,d=.2,v=.12,f1=1200,f2=1200,q=.9,type='bandpass'}={}){snd(a=>{const t0=a.currentTime+t,src=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();src.buffer=nbuf;src.loop=true;fl.type=type;fl.Q.value=q;fl.frequency.setValueAtTime(f1,t0);fl.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+Math.min(.02,d/3));g.gain.exponentialRampToValueAtTime(.0006,t0+d);src.connect(fl);fl.connect(g);g.connect(master);src.start(t0,Math.random()*.5);src.stop(t0+d+.05)})}
+const sfx={
+  click(){hiss({d:.03,v:.09,f1:2600,f2:1800,type:'highpass'});note(700,{d:.06,v:.05,bright:0})},
+  pop(){glide(360,960,{d:.07,v:.24})},
+  ok(){note(784,{d:.32,v:.2});note(1047,{t:.09,d:.5,v:.22});note(2093,{t:.09,d:.3,v:.035,bright:0})},
+  no(){note(311,{d:.2,v:.17,type:'triangle',bright:0});note(233,{t:.12,d:.32,v:.17,type:'triangle',bright:0})},
+  snap(){hiss({d:.05,v:.5,f1:3200,f2:900,type:'bandpass'});glide(820,260,{d:.08,v:.16})},
+  whoosh(){hiss({d:.18,v:.45,f1:500,f2:2800,q:.7})},
+  absorb(){glide(210,95,{d:.13,v:.2})},
+  splash(){hiss({d:.38,v:.55,f1:2600,f2:420,q:.8});glide(300,760,{t:.07,d:.06,v:.12});glide(420,980,{t:.17,d:.05,v:.09})},
+  chunk(){hiss({d:.06,v:.4,f1:1600,f2:260,type:'lowpass'});glide(150,52,{d:.16,v:.34});hiss({t:.13,d:.04,v:.25,f1:2400,f2:1200,type:'highpass'})},
+  win(){[523,659,784,1047].forEach((f,i)=>note(f,{t:i*.09,d:.36,v:.17}));[1047,1319,1568].forEach(f=>note(f,{t:.42,d:1.1,v:.12,bright:.2}));hiss({t:.42,d:.7,v:.05,f1:6000,f2:9000,type:'highpass'})}};
+
+/* ---------- read aloud ---------- */
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\s+/g,' '));u.rate=.95;speechSynthesis.speak(u)}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('.listen');if(b){const src=b.closest('[data-say]');speak(src?src.dataset.say:b.parentElement.textContent)}});
+const live=m=>{$('#live').textContent='';setTimeout(()=>$('#live').textContent=m,40)};
+
+/* ---------- art ---------- */
+const A={
+  drop:`<svg viewBox="0 0 60 80" aria-hidden="true"><path d="M30 4c14 22 24 34 24 48a24 24 0 01-48 0C6 38 16 26 30 4z" fill="#4b9cd3" stroke="#12263f" stroke-width="4"/><text x="30" y="60" text-anchor="middle" font-weight="700" font-size="17" fill="#fff">H₂O</text></svg>`,
+  star:on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z" fill="${on?'#f7c531':'#dbe6ef'}" stroke="#12263f" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+  ok:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1f8a4c"/><path d="M6.5 12.5l3.6 3.6 7.4-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  no:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#c93a3a"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`,
+  ear:`<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  sndOn:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  sndOff:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  access:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.5" fill="currentColor"/><path d="M4 8.5l8 1.5 8-1.5M12 10v5l-3.5 6M12 15l3.5 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  home:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20h-6v-5H9v5H3z" fill="currentColor"/></svg>`,
+  logo:`<svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#4b9cd3" stroke="#fff" stroke-width="3"/><rect x="21.5" y="7" width="5" height="19" rx="2.5" fill="#b9784a" stroke="#12263f" stroke-width="2"/><path d="M13 25h22l4 15H9z" fill="#f7c531" stroke="#12263f" stroke-width="2.4" stroke-linejoin="round"/><path d="M15 34v5M21 35v5M27 35v5M33 34v5" stroke="#12263f" stroke-width="2" stroke-linecap="round"/></svg>`,
+  food:{
+    oats:`<svg viewBox="0 0 60 60"><path d="M6 28h48c0 14-9 24-24 24S6 42 6 28z" fill="#4b9cd3" stroke="#12263f" stroke-width="3"/><ellipse cx="30" cy="28" rx="24" ry="8" fill="#f0dcae" stroke="#12263f" stroke-width="3"/><g fill="#c9a765"><ellipse cx="22" cy="27" rx="4" ry="2"/><ellipse cx="34" cy="30" rx="4" ry="2"/><ellipse cx="38" cy="25" rx="4" ry="2"/><ellipse cx="27" cy="31" rx="3" ry="1.6"/></g></svg>`,
+    peas:`<svg viewBox="0 0 60 60"><path d="M6 24c8 28 40 28 48 0-10 8-38 8-48 0z" fill="#3f8a3a" stroke="#12263f" stroke-width="3" stroke-linejoin="round"/><g fill="#8fd26b" stroke="#12263f" stroke-width="2.5"><circle cx="18" cy="32" r="6"/><circle cx="30" cy="35" r="6.5"/><circle cx="42" cy="32" r="6"/></g></svg>`,
+    beans:`<svg viewBox="0 0 60 60"><g fill="#a3332c" stroke="#12263f" stroke-width="3"><path d="M10 18c10-10 24-2 18 10-4 8-6 6-10 12-6 8-18 0-12-10 2-4 0-8 4-12z"/><path d="M36 28c10-8 20 0 16 10-3 7-5 5-8 10-5 6-15 0-10-8 2-4 0-8 2-12z"/></g></svg>`,
+    apples:`<svg viewBox="0 0 60 60"><path d="M30 18c-8-8-24-4-22 14 2 14 10 22 16 22 3 0 4-2 6-2s3 2 6 2c6 0 14-8 16-22 2-18-14-22-22-14z" fill="#d83a34" stroke="#12263f" stroke-width="3"/><path d="M30 18c0-6 2-10 6-13" fill="none" stroke="#12263f" stroke-width="3" stroke-linecap="round"/><path d="M36 9c6-4 12-2 14 2-6 4-12 2-14-2z" fill="#4f9e45" stroke="#12263f" stroke-width="2.5"/></svg>`,
+    citrus:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24" fill="#f6a12b" stroke="#12263f" stroke-width="3"/><circle cx="30" cy="30" r="18" fill="#ffd27a"/><g stroke="#f6a12b" stroke-width="2.5"><path d="M30 12v36M12 30h36M17 17l26 26M43 17L17 43"/></g></svg>`,
+    wheat:`<svg viewBox="0 0 60 60"><path d="M30 56V20" stroke="#12263f" stroke-width="3"/><g fill="#e3a93a" stroke="#12263f" stroke-width="2.4"><ellipse cx="30" cy="10" rx="5" ry="8"/><ellipse cx="21" cy="20" rx="5" ry="8" transform="rotate(-28 21 20)"/><ellipse cx="39" cy="20" rx="5" ry="8" transform="rotate(28 39 20)"/><ellipse cx="21" cy="33" rx="5" ry="8" transform="rotate(-28 21 33)"/><ellipse cx="39" cy="33" rx="5" ry="8" transform="rotate(28 39 33)"/></g></svg>`,
+    nuts:`<svg viewBox="0 0 60 60"><g stroke="#12263f" stroke-width="3"><path d="M30 6c12 10 16 22 12 34-3 9-9 14-12 14s-9-5-12-14C14 28 18 16 30 6z" fill="#c98b4f"/><path d="M30 14v32M24 22v20M36 22v20" fill="none" stroke-width="2" opacity=".5"/></g></svg>`,
+    seeds:`<svg viewBox="0 0 60 60"><g fill="#3b3b44" stroke="#12263f" stroke-width="2.5"><path d="M16 10c8 6 9 16 3 24-7-6-9-16-3-24z"/><path d="M40 12c8 6 9 16 3 24-7-6-9-16-3-24z"/><path d="M28 28c8 6 9 16 3 24-7-6-9-16-3-24z"/></g><g stroke="#e9e9ee" stroke-width="2" stroke-linecap="round"><path d="M17 16v10M41 18v10M29 34v10"/></g></svg>`,
+    potato:`<svg viewBox="0 0 60 60"><path d="M8 34c-2-14 10-24 24-22 14 0 22 10 20 22-2 12-14 18-26 16-10-1-16-6-18-16z" fill="#b98652" stroke="#12263f" stroke-width="3"/><path d="M18 22c8-6 20-6 28 2-10-2-20-2-28-2z" fill="#f2e2b3" stroke="#12263f" stroke-width="2.5" stroke-linejoin="round"/><g fill="#7a5328"><circle cx="20" cy="36" r="2"/><circle cx="34" cy="42" r="2"/><circle cx="42" cy="32" r="2"/></g></svg>`,
+    peels:`<svg viewBox="0 0 60 60"><path d="M30 8c2 10 2 16 0 22-10 2-18 10-22 22 12-2 20-8 22-16 2 8 10 14 22 16-4-12-12-20-22-22" fill="#f4d23c" stroke="#12263f" stroke-width="3" stroke-linejoin="round"/><rect x="27" y="4" width="6" height="8" rx="2" fill="#7a5328" stroke="#12263f" stroke-width="2"/></svg>`
+  }
+};
+['oats','peas','beans','apples','citrus','wheat','nuts','seeds','potato','peels','sugar','butter','egg','celery'].forEach(f=>A.food[f]=pic('food-'+f));A.food.bran=A.food.wheat;
+Object.assign(A,{sponge:pic('sponge-wave'),spongeThink:pic('sponge-think'),spongeGel:pic('sponge-gel'),spongeCheer:pic('sponge-cheer'),broom:pic('broom-wave'),broomThink:pic('broom-think'),broomSweep:pic('broom-sweep'),broomCheer:pic('broom-cheer'),muffin:pic('bran-confident'),plant:pic('plant'),enzyme:pic('enzyme-ready')});
+
+/* glucose bead chains for the polysaccharide diagrams */
+function beads(pts,links,col='#f0803c'){let s='';links.forEach(([a,b])=>s+=`<line x1="${pts[a][0]}" y1="${pts[a][1]}" x2="${pts[b][0]}" y2="${pts[b][1]}" stroke="#12263f" stroke-width="2.5"/>`);pts.forEach((p,i)=>s+=`<circle class="bead" style="animation-delay:${-(i%7)*.3}s" cx="${p[0]}" cy="${p[1]}" r="5.6" fill="${col}" stroke="#12263f" stroke-width="2"/>`);return s}
+function molSVG(kind){let pts=[],links=[];const add=(x,y,from)=>{pts.push([+x.toFixed(1),+y.toFixed(1)]);if(from!=null)links.push([from,pts.length-1]);return pts.length-1};
+  if(kind==='cellulose'){for(let r=0;r<4;r++){let prev=null;for(let c=0;c<13;c++)prev=add(22+c*13,36+r*26,prev)}for(let r=0;r<3;r++)for(let c=1;c<13;c+=3)links.push([r*13+c,(r+1)*13+c]);}
+  else if(kind==='amylose'){let prev=null;for(let i=0;i<44;i++){const th=i*.55;prev=add(22+th*6.2-17*Math.sin(th),75-30*Math.cos(th),prev)}}
+  else{const grow=(from,x,y,ang,n,depth,o)=>{let prev=from;for(let i=0;i<n;i++){x+=Math.cos(ang)*o.step;y+=Math.sin(ang)*o.step;prev=add(x,y,prev);if(depth>0&&i%o.every===1)grow(prev,x,y,ang+(Math.floor(i/o.every)%2?1:-1)*o.spread,o.bn,depth-1,o)}};
+    if(kind==='glycogen'){const c=add(100,75,null);for(let k=0;k<5;k++)grow(c,100,75,k*Math.PI*2/5+.3,4,2,{step:9.5,every:2,spread:1,bn:3})}else{const c=add(14,84,null);grow(c,14,84,-.05,14,1,{step:12,every:4,spread:.85,bn:4})}}
+  const lab={cellulose:'Straight chains stacked in rigid rows',amylose:'One coiled chain',glycogen:'Dense bush with many branches',amylopectin:'A chain with a few branches'}[kind];
+  return `<svg viewBox="0 0 200 150" role="img" aria-label="${lab}">${beads(pts,links,kind==='cellulose'?'#4f9e45':kind==='glycogen'?'#c7577f':'#f0803c')}</svg>`}
+
+/* ---------- soap-bubble celebration ---------- */
+const fx=$('#fx'),fxc=fx.getContext('2d');let bub=[],fxOn=false;
+function bubbles(n=38){if(S.set.calm)return;fx.width=innerWidth;fx.height=innerHeight;for(let i=0;i<n;i++)bub.push({x:Math.random()*fx.width,y:fx.height+Math.random()*200,r:8+Math.random()*26,v:2+Math.random()*4,w:Math.random()*6,life:1});if(!fxOn){fxOn=true;requestAnimationFrame(fxTick)}}
+function fxTick(){fxc.clearRect(0,0,fx.width,fx.height);bub=bub.filter(b=>b.y>-60);bub.forEach(b=>{b.y-=b.v;b.w+=.05;const x=b.x+Math.sin(b.w)*14;fxc.beginPath();fxc.arc(x,b.y,b.r,0,7);fxc.fillStyle='rgba(191,225,247,.35)';fxc.fill();fxc.lineWidth=2;fxc.strokeStyle='rgba(75,156,211,.9)';fxc.stroke();fxc.beginPath();fxc.arc(x-b.r*.35,b.y-b.r*.35,b.r*.2,0,7);fxc.fillStyle='#fff';fxc.fill()});if(bub.length)requestAnimationFrame(fxTick);else{fxOn=false;fxc.clearRect(0,0,fx.width,fx.height)}}
+
+/* ---------- settings / accessibility ---------- */
+function applySet(){const c=document.documentElement.classList,s=S.set;c.toggle('sz1',s.size===1);c.toggle('sz2',s.size===2);c.toggle('hc',s.hc);c.toggle('dys',s.dys);c.toggle('calm',s.calm);c.toggle('read',s.read);
+  $('#snd').innerHTML=(s.sound?A.sndOn:A.sndOff)+`<span>Sound ${s.sound?'on':'off'}</span>`;$('#snd').setAttribute('aria-pressed',s.sound);
+  $$('#a11y .tog').forEach(b=>{const k=b.dataset.k;b.setAttribute('aria-pressed',k==='size1'?s.size===1:k==='size2'?s.size===2:!!s[k])});save()}
+function buildA11y(){const T=[['size1','Bigger text','Makes all words larger'],['size2','Biggest text','Largest reading size'],['hc','High contrast','Black on white with bold outlines'],['dys','Dyslexia-friendly font','Wider letters and more spacing'],['calm','Calm mode','Turns off motion and animations'],['read','Read aloud buttons','Adds a Listen button to directions'],['sound','Sound effects','Clicks, chimes and splashes']];
+  $('#a11y').innerHTML=`<h2>Make it work for you</h2>${T.map(t=>`<button class="tog" data-k="${t[0]}" aria-pressed="false"><i></i><span><b>${t[1]}</b><small>${t[2]}</small></span></button>`).join('')}<p class="note" style="margin:10px 0">Every game works with a mouse, a touch screen, or the keyboard: use Tab to move and Enter to choose. Anything you can drag, you can also tap once to pick up and tap again to place.</p><button class="btn sm" id="a11yX">Done</button>`;
+  $('#a11y').addEventListener('click',e=>{const b=e.target.closest('.tog');if(e.target.id==='a11yX'){toggleA11y(false);return}if(!b)return;const k=b.dataset.k,s=S.set;if(k==='size1')s.size=s.size===1?0:1;else if(k==='size2')s.size=s.size===2?0:2;else s[k]=!s[k];k==='sound'?sfx.ok():sfx.click();applySet()})}
+function toggleA11y(on){const p=$('#a11y');on=on??!p.classList.contains('on');p.classList.toggle('on',on);p.setAttribute('aria-hidden',!on);p.inert=!on;if(on)$('.tog',p).focus();else $('#a11yBtn').focus()}
+
+/* ---------- scale the whole app up on wide screens so it fills the window ---------- */
+let Z=1;function fit(){Z=Math.max(1,Math.min(1.6,innerWidth/1400));document.documentElement.style.setProperty('--z',Z.toFixed(3))}
+fit();addEventListener('resize',fit);
+
+/* ---------- screens ---------- */
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);if(game.stop){game.stop();game.stop=null}}
+const game={stop:null};
+const shine=()=>Object.values(S.m).reduce((a,m)=>a+(m.shine||0),0);
+const RANKS=[[0,'Trainee'],[150,'Sweeper'],[400,'Scrubber'],[700,'Crew Chief'],[1000,'Gut Guardian']];
+function rank(){const x=shine();let i=0;RANKS.forEach((r,k)=>{if(x>=r[0])i=k});const nx=RANKS[i+1];return{name:RANKS[i][1],pct:nx?Math.round((x-RANKS[i][0])/(nx[0]-RANKS[i][0])*100):100,next:nx}}
+function hud(){$('#shine').textContent=shine();$('#who').textContent=S.name||'Recruit'}
+
+function welcome(){const w=$('#welcome');new Image().src='img/door.webp';
+  w.innerHTML=`<div class="hero" style="background-image:url(${IMG.crew})"><div class="duo">${A.sponge}${A.broom}</div>
+  <div class="hero-in"><div style="flex:1;min-width:280px"><h1><small>Food &amp; Exercise Science · Standard 3.5</small>Mission:<span>Indigestible</span></h1><p class="tag">Your gut hired a cleaning crew that never eats, never sleeps over, and never gets digested. Clock in, learn the job, and earn your Gut Guardian badge.</p></div>
+  <form class="clock" id="clockForm"><h2>Crew time clock</h2><label for="nm">Type your first name and last initial</label><input id="nm" maxlength="24" autocomplete="off" value="${esc(S.name)}" placeholder="Marty M."><button class="btn yellow" type="submit">Clock in</button></form></div></div>`;
+  const hero=$('.hero',w);for(let i=0;i<14;i++){const b=document.createElement('i');b.className='floaty';const s=12+Math.random()*34;b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*96}%;bottom:${Math.random()*40}px;animation-duration:${5+Math.random()*6}s;animation-delay:${-Math.random()*8}s`;hero.append(b)}
+  $('#clockForm').addEventListener('submit',async e=>{e.preventDefault();const n=$('#nm').value.trim();if(!n){$('#nm').classList.add('shake');$('#nm').focus();setTimeout(()=>$('#nm').classList.remove('shake'),500);return}S.name=n;save();
+    const d=$('#door');$('#doorName').textContent=n;d.classList.remove('go');void d.offsetWidth;d.classList.add('go');sfx.chunk();await wait(900);hq();setTimeout(()=>sfx.win(),300);await wait(1800);d.classList.remove('go');bubbles(30)})}
+
+function hq(){hud();const r=rank(),L=[[1,'Emerging','I can describe what fiber is, and explain how it is different from other types of polysaccharides such as starch or glycogen.'],[2,'Proficient','Additionally, I can differentiate between soluble and insoluble fiber.'],[3,'Advanced','Additionally, I can describe the benefits of dietary fiber as I explain their role in maintaining proper health.'],[0,'All levels','Put it all together before the exam. Fewer clues means more points.']];
+  $('#hq').innerHTML=`<div class="hq-top" style="background-image:url(img/hq.webp)"><div class="who"><h1>Crew HQ</h1><p>Welcome to the night shift, <b>${esc(S.name)}</b>. Pick any job on the board. Your shine and stars are saved on this device.</p></div>
+   <div class="hq-row"><div class="rank">${A.logo.replace('width="40" height="40"','')}<div><span style="font-size:.8rem">Crew rank</span><b>${r.name}</b><div class="meter" role="img" aria-label="${r.pct}% to next rank"><i style="width:${r.pct}%"></i></div></div></div>
+   <button class="btn yellow" id="toDeb">Mission Debrief</button></div></div>
+   ${L.map(l=>`<section class="floor l${l[0]}"><div class="floor-h"><span class="lvl">${l[0]?'Level '+l[0]:'Final review'}<small>${l[1]}</small></span><p class="ican">${l[2]}</p></div><div class="mgrid">${M.filter(m=>m.level===l[0]).map(m=>{const d=S.m[m.id];return `<button class="mcard" data-m="${m.id}"><span class="art" style="background:${m.bg||'var(--sky)'}">${m.art}</span><span class="kind">${m.kind}</span><h3>${m.title}</h3><p>${m.blurb}</p><span class="stars" aria-label="${d?d.stars:0} of 3 stars">${[1,2,3].map(i=>A.star(d&&d.stars>=i)).join('')}</span>${d?`<span class="done">Best ${d.pct}%</span>`:''}</button>`}).join('')}</div></section>`).join('')}`;
+  $('#toDeb').onclick=debrief;$$('.mcard').forEach(b=>b.onclick=()=>{sfx.click();runMission(b.dataset.m)});show('hq')}
+
+/* ---------- mission runner ---------- */
+const M=[];let cur=null;
+function runMission(id){const m=M.find(x=>x.id===id);
+  cur={m,step:0,tok:0,live:{s:0,t:0,b:0},parts:m.steps.map(()=>({s:0,t:0,b:0,done:false})),
+    sum(k){return this.parts.reduce((a,p,i)=>a+(i===this.step?this.live[k]:p[k]),0)},
+    get score(){return this.sum('s')},get total(){return this.sum('t')},get bonus(){return this.sum('b')},set bonus(v){this.live.b+=v-this.sum('b')}};
+  show('mission');renderStep()}
+function mhead(){const m=cur.m,n=m.steps.length,k=cur.step;
+  $('#mhead').innerHTML=`<button class="btn ghost sm" id="back">Back to HQ</button><h1>${m.title}</h1>${n>1?`<div class="pnav">${k?'<button class="btn ghost sm" id="prevP">Previous part</button>':''}<span class="pcount">Part ${k+1} of ${n}</span>${cur.parts[k].done&&k<n-1?'<button class="btn ghost sm" id="nextP">Next part</button>':''}</div>`:''}<div class="dots" aria-hidden="true">${m.steps.map((_,i)=>`<i class="${i===k?'now':cur.parts[i].done?'on':''}"></i>`).join('')}</div><div class="score" aria-live="polite">${cur.score} / ${cur.total} right</div>`;
+  $('#back').onclick=hq;const go=d=>{sfx.click();cur.step+=d;renderStep()};if($('#prevP'))$('#prevP').onclick=()=>go(-1);if($('#nextP'))$('#nextP').onclick=()=>go(1)}
+/* each part keeps its own tally, so going back and replaying a part never double-counts; the better run of a part is the one that is kept */
+function renderStep(){if(game.stop){game.stop();game.stop=null}cur.live={s:0,t:0,b:0};const tok=++cur.tok,k=cur.step;mhead();const st=$('#stage');st.innerHTML='';window.scrollTo(0,0);
+  cur.m.steps[k](st,()=>{if(tok!==cur.tok)return;const o=cur.parts[k],n=cur.live;if(!o.done||!n.t||!o.t||n.s/n.t>=o.s/o.t)cur.parts[k]={...n,done:true};cur.live={s:0,t:0,b:0};cur.step++;cur.step>=cur.m.steps.length?finish():renderStep()})}
+function mark(ok,topic,quiet){cur.live.t++;if(ok)cur.live.s++;const t=S.topics[topic]||(S.topics[topic]=[0,0]);t[1]++;if(ok)t[0]++;if(!quiet)ok?sfx.ok():sfx.no();const sc=$('#mhead .score');if(sc)sc.textContent=`${cur.score} / ${cur.total} right`;save()}
+function finish(){const m=cur.m,pct=cur.total?Math.round(cur.score/cur.total*100):100,stars=pct>=90?3:pct>=70?2:1,sh=cur.score*10+cur.bonus,old=S.m[m.id]||{};
+  S.m[m.id]={pct:Math.max(pct,old.pct||0),stars:Math.max(stars,old.stars||0),shine:Math.max(sh,old.shine||0),plays:(old.plays||0)+1,when:new Date().toLocaleDateString()};save();hud();
+  const i=M.indexOf(m),nx=M[i+1];
+  $('#mhead').innerHTML='';$('#stage').innerHTML=`<div class="panel result"><div class="cheer">${A.spongeCheer}${A.broomCheer}</div><div class="stars" aria-label="${stars} of 3 stars">${[1,2,3].map(k=>A.star(stars>=k)).join('')}</div><h2>${stars===3?'Spotless!':stars===2?'Squeaky clean!':'Job done!'}</h2><p class="big">${cur.score} of ${cur.total} right on the first try · ${pct}% · +${sh} shine</p><p style="max-width:56ch;margin:0 auto 20px">${stars===3?'That is expert-level work. Your best score is saved for your Mission Debrief.':'Want more stars? Run the job again. Only your best score is kept.'}</p><div class="center"><button class="btn ghost" id="again">Play again</button>${nx?`<button class="btn" id="nextM">Next job: ${nx.title}</button>`:''}<button class="btn yellow" id="home2">Back to HQ</button></div></div>`;
+  $('#again').onclick=()=>runMission(m.id);$('#home2').onclick=hq;if(nx)$('#nextM').onclick=()=>runMission(nx.id);sfx.win();bubbles(stars*18);live(`Mission complete. ${stars} of 3 stars.`);($('#nextM')||$('#home2')).focus()}
+
+/* ---------- shared building blocks ---------- */
+function brief(el,title,text,who='sponge'){el.append(h(`<div class="brief" data-say="${esc(title+'. '+text.replace(/<[^>]+>/g,''))}"><div class="who">${A[who]}</div><div class="txt"><h2>${title}</h2><p>${text}</p></div><button class="listen" aria-label="Listen to the directions">${A.ear}Listen</button></div>`))}
+function fb(el,ok,msg){let f=$('.fb',el);if(!f){f=h('<div class="fb" role="status"></div>');el.append(f)}f.className='fb '+(ok?'ok':'no');f.innerHTML=(ok?A.ok:A.no)+`<span>${msg}</span>`;live(msg.replace(/<[^>]+>/g,''))}
+function doneBar(el,msg,next,label='Keep going'){const d=h(`<div class="donebar"><p>${msg}</p><button class="btn">${label}</button></div>`);el.append(d);$('button',d).onclick=()=>{sfx.click();next()};sfx.pop();setTimeout(()=>{$('button',d).focus({preventScroll:true});d.scrollIntoView({block:'nearest',behavior:S.set.calm?'auto':'smooth'})},60)}
+function nudge(n){n.classList.remove('shake');void n.offsetWidth;n.classList.add('shake')}
+
+/* tap-or-drag sorter. items:[{html,bin,topic,why}] bins:[{id,label,art,sub,cls}] */
+function sortGame(el,{items,bins,topic,hint}){return new Promise(res=>{
+  const w=h(`<div class="sort"><div class="tray" aria-label="Cards to sort"></div><p class="hint">${hint||'Tap a card, then tap where it belongs. You can also drag it.'}</p><div class="bins"></div></div>`);el.append(w);
+  const tray=$('.tray',w),bz=$('.bins',w);let sel=null,left=items.length;
+  const place=(it,bin,bd)=>{if(!it)return;const good=[].concat(it.bin).includes(bin.id);
+    if(good){mark(!it.miss,it.topic||topic);it.n.classList.remove('sel');it.n.classList.add('ok','small');it.n.disabled=true;it.n.draggable=false;$('.bin-in',bd).append(it.n);sel=null;left--;fb(w,true,it.why||'Right spot!');if(!left)setTimeout(res,500)}
+    else{if(!it.miss){it.miss=true}sfx.no();nudge(it.n);nudge(bd);fb(w,false,it.nope||'Not that one. Look again and try another spot.')}};
+  shuffle(items).forEach(it=>{const n=h(`<button class="chip" draggable="true">${it.html}</button>`);it.n=n;n.onclick=()=>{if(n.disabled)return;$$('.chip.sel',tray).forEach(c=>c.classList.remove('sel'));sel=sel===it?null:it;if(sel){n.classList.add('sel');sfx.click()}};n.addEventListener('dragstart',e=>{sel=it;try{e.dataTransfer.setData('text/plain','x')}catch(_){}});tray.append(n)});
+  bins.forEach(b=>{const d=h(`<div class="bin ${b.cls||''}" tabindex="0" role="button" aria-label="Place in ${esc(b.label.replace(/<[^>]+>/g,''))}">${b.art?`<div class="bin-art">${b.art}</div>`:''}<strong>${b.label}</strong>${b.sub?`<small>${b.sub}</small>`:''}<div class="bin-in"></div></div>`);
+    d.onclick=()=>{if(sel)place(sel,b,d);else fb(w,false,'Pick a card first, then choose where it goes.')};d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();d.onclick()}};
+    d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('over')});d.addEventListener('dragleave',()=>d.classList.remove('over'));d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('over');place(sel,b,d)});bz.append(d)})})}
+
+/* tap the steps in order */
+function orderGame(el,{steps,topic,first='Tap the step that happens first'}){return new Promise(res=>{let i=0,miss=false;
+  const w=h(`<div class="order"><ol class="chain" aria-label="Your chain so far"></ol><div class="tray"></div></div>`);el.append(w);const chain=$('.chain',w),tray=$('.tray',w);
+  shuffle(steps.map((s,k)=>({s,k}))).forEach(o=>{const b=h(`<button class="chip">${o.s}</button>`);b.onclick=()=>{if(o.k===i){mark(!miss,topic);miss=false;i++;const li=document.createElement('li');li.innerHTML=o.s;chain.append(li);b.remove();if(i===steps.length){fb(w,true,'That is the full chain of events, in order.');setTimeout(res,500)}else fb(w,true,'Yes. What happens next?')}else{miss=true;sfx.no();nudge(b);fb(w,false,i?'Not yet. What does the last step in your chain cause?':'Something else has to happen before that.')}};tray.append(b)})})}
+
+/* fill the blanks from a word bank. text uses [answer] */
+function clozeGame(el,{text,bank,topic}){return new Promise(res=>{const ans=[];const html=text.replace(/\[([^\]]+)\]/g,(m,a)=>{ans.push(a);return `<button class="blank" data-i="${ans.length-1}" aria-label="blank ${ans.length}">&nbsp;</button>`});
+  const w=h(`<div><div class="cloze">${html}</div><div class="tray" aria-label="Word bank"></div></div>`);el.append(w);const bl=$$('.blank',w),miss=ans.map(()=>false);let now=0,left=ans.length;
+  const focus=i=>{now=i;bl.forEach((b,k)=>b.classList.toggle('now',k===i&&!b.classList.contains('ok')))};bl.forEach((b,i)=>b.onclick=()=>{if(!b.classList.contains('ok'))focus(i)});focus(0);
+  shuffle([...ans,...bank]).forEach(wd=>{const c=h(`<button class="chip">${wd}</button>`);c.onclick=()=>{if(wd===ans[now]){mark(!miss[now],topic);bl[now].textContent=wd;bl[now].classList.add('ok');bl[now].classList.remove('now');c.remove();left--;if(!left){fb(w,true,'Every blank is right. Read it once more — that sentence is exam gold.');setTimeout(res,500);return}let n=bl.findIndex(b=>!b.classList.contains('ok'));focus(n);fb(w,true,'Got it. Next blank.')}else{miss[now]=true;sfx.no();nudge(c);fb(w,false,`"${wd}" does not fit the highlighted blank. Try another word.`)}};$('.tray',w).append(c)})})}
+
+/* one-question pick. opts are strings (or html); a = index of answer */
+function pick(el,{q,opts,a,topic,why,art}){return new Promise(res=>{let miss=false;const order=shuffle(opts.map((o,i)=>i));
+  const w=h(`<div class="panel" style="margin-top:14px">${art?`<div style="max-width:520px;margin:0 auto 10px">${art}</div>`:''}<p class="q">${q}</p><div class="opts"></div></div>`);el.append(w);
+  order.forEach(i=>{const b=h(`<button class="opt">${opts[i]}</button>`);b.onclick=()=>{if(i===a){mark(!miss,topic);b.classList.add('ok');$$('.opt',w).forEach(x=>x.disabled=true);fb(w,true,why||'Correct!');setTimeout(res,400)}else{miss=true;sfx.no();b.classList.add('no');b.disabled=true;nudge(b);fb(w,false,'Not quite. Cross that one off and try again.')}};$('.opts',w).append(b)})})}
+
+/* ===== Level 1 and Level 2 missions ===== */
+const T1='What fiber is',T2='Starch, glycogen and cellulose',T3='Glycosidic bonds and digestion',T4='Soluble vs. insoluble fiber',T5='Fiber food sources';
+
+/* ---------- M1: Orientation Day ---------- */
+M.push({id:'orient',level:1,kind:'Sort · Fill in · Match',title:'Orientation Day',blurb:'Run the Digest-o-Matic and find the one nutrient your body cannot take apart.',art:'<img src="img/machine.webp" alt="">',bg:'#d9f0d0',steps:[
+(el,next)=>{brief(el,'Run the Digest-o-Matic','Your digestive system breaks most nutrients apart to harvest energy. One nutrient rides straight through. For each food on the belt, predict what happens inside.','broom');
+  const items=shuffle([['sugar','Table sugar',1,'Table sugar is a sugar, and sugars are snapped apart and burned for energy.'],['butter','Butter',1,'Butter is mostly fat. Fats are broken down and harvested for energy.'],['egg','Egg',1,'An egg is packed with protein. Proteins are broken down too.'],['potato','Potato',1,'A potato is full of starch, a polysaccharide your enzymes can digest.'],['celery','Celery strings',0,'Those tough strings are fiber. Fiber passes through almost entirely unchanged: zero calories.'],['bran','Wheat bran',0,'Wheat bran is fiber too. It sweeps through without being digested.']]);
+  let i=0,cal=0,busy=false;
+  const w=h(`<div><div class="belt"><div class="lbl" id="blbl"></div><div class="cal">Energy harvested <b id="bcal">0</b></div><div class="rig"><img class="mach" src="img/machine.webp" alt="The Digest-o-Matic, a stomach-shaped machine with a conveyor belt running in one side and out the other" draggable="false"></div></div><div class="center" style="margin-top:14px"><button class="btn yellow" id="bE">Broken down for energy</button><button class="btn" id="bP">Sweeps through unchanged</button></div></div>`);el.append(w);
+  const belt=$('.rig',w);let node;
+  const load=()=>{if(i>=items.length){$('#bE',w).disabled=$('#bP',w).disabled=true;doneBar(el,'Sugars, fats and proteins get taken apart for energy. Fiber is the one nutrient that passes through almost entirely unchanged.',next);return}
+    node=h(`<div class="item">${A.food[items[i][0]]}</div>`);belt.append(node);$('#blbl',w).textContent=`Food ${i+1} of ${items.length}: ${items[i][1]}`;busy=false};
+  const go=async guess=>{if(busy)return;busy=true;const it=items[i],ok=guess===it[2];mark(ok,T1);fb(w,ok,(ok?'Yes! ':'Not this time. ')+it[3]);
+    node.classList.add('in');await wait(1000);$('.mach',w).classList.add('chomp');await wait(900);$('.mach',w).classList.remove('chomp');
+    if(it[2]){node.remove();cal++;$('#bcal',w).textContent=cal;for(let k=0;k<10;k++){const s=h('<i class="spark"></i>');s.style.cssText=`left:51%;top:52%;--dx:${(Math.random()-.5)*260}px;--dy:${-Math.random()*120}px`;belt.append(s);setTimeout(()=>s.remove(),900)}sfx.pop()}
+    else{node.classList.remove('in');node.classList.add('out');const f=h('<div class="floatup" style="left:70%;top:22%">+0 calories</div>');belt.append(f);setTimeout(()=>f.remove(),1300);sfx.splash();await wait(1000);const n=node;setTimeout(()=>n.remove(),600)}
+    await wait(500);i++;load()};
+  $('#bE',w).onclick=()=>go(1);$('#bP',w).onclick=()=>go(0);load()},
+async(el,next)=>{brief(el,'Write the job description','Now say exactly what fiber is. Tap a word from the bank to drop it into the yellow blank.','spongeThink');
+  await clozeGame(el,{topic:T1,text:'Dietary fiber is a [carbohydrate]. More specifically, it is a complex [polysaccharide] made of long chains of [glucose]. Scientists call it [cellulose]. Because it passes through your body almost entirely [unchanged], it adds [zero] calories to your diet.',bank:['protein','lipid','amino acids','monosaccharide','glycogen','four']});
+  doneBar(el,'That is a Level 1 definition: fiber is a polysaccharide (chains of glucose) that we cannot digest.',next)},
+async(el,next)=>{el.append(h(`<div class="panel" style="padding:0;overflow:hidden;margin-bottom:14px"><img src="${IMG.crew}" alt="A line of green fiber characters in hard hats sweeping through a pink intestine tunnel" style="display:block;width:100%;max-height:230px;object-fit:cover;object-position:center 60%"></div>`));
+  brief(el,'Crew talk, science talk','Fiber works like a cleaning crew you hire for your house. Match each thing the crew does to what it means inside your body.','broom');
+  await sortGame(el,{topic:T1,items:[{html:'The crew does not eat your food',bin:'cal'},{html:'The crew sweeps through, scrubs, and then leaves',bin:'pass'},{html:'The crew never moves into your guest room',bin:'pass'},{html:'Without the crew, your house falls into disarray',bin:'need'}],
+    bins:[{id:'cal',label:'Fiber adds zero calories'},{id:'pass',label:'Fiber passes through instead of being absorbed'},{id:'need',label:'Your body needs fiber to stay healthy'}]});
+  doneBar(el,'Orientation complete. You can describe what fiber is and what makes it unusual.',next,'Finish job')}
+]});
+
+/* ---------- M2: The Lineup ---------- */
+M.push({id:'lineup',level:1,kind:'Label · Sort · Predict',title:'The Polysaccharide Lineup',blurb:'Three suspects, all built from glucose. Only one is fiber. Tell them apart by shape and job.',art:molSVG('glycogen'),bg:'#fde3ec',steps:[
+async(el,next)=>{brief(el,'Name the suspects','Starch, glycogen and cellulose are all chains of glucose. The way the chain is built is the giveaway. Send each name and shape clue to the right diagram.','sponge');
+  await sortGame(el,{topic:T2,items:[{html:'Starch',bin:'a'},{html:'Glycogen',bin:'b'},{html:'Cellulose (fiber)',bin:'c'},{html:'Coiled like a spring (helical)',bin:'a'},{html:'Highly branched, like a dense bush',bin:'b'},{html:'Straight, rigid chains that stack like steel beams',bin:'c'}],
+    bins:[{id:'a',label:'Suspect A',art:molSVG('amylose')},{id:'b',label:'Suspect B',art:molSVG('glycogen')},{id:'c',label:'Suspect C',art:molSVG('cellulose')}]});
+  doneBar(el,'Shape matters: coils and bushes are easy to take apart. Straight stacked beams are built to hold things up.',next)},
+async(el,next)=>{brief(el,'What is each one for?','Sort every fact card under the polysaccharide it describes.','broomThink');
+  await sortGame(el,{topic:T2,items:[{html:'Stores energy in <b>plants</b>',bin:'s'},{html:'Found in potatoes, grains and roots',bin:'s'},{html:'Stores energy in <b>animals</b>',bin:'g'},{html:'Found in the liver and skeletal muscles',bin:'g'},{html:'Its many branches allow rapid release of glucose',bin:'g'},{html:'Gives plants <b>structural support</b>',bin:'c'},{html:'Found in plant cell walls',bin:'c'},{html:'Can be branched (amylopectin) or unbranched (amylose)',bin:'s'}],
+    bins:[{id:'s',label:'Starch',art:molSVG('amylopectin')},{id:'g',label:'Glycogen',art:molSVG('glycogen')},{id:'c',label:'Cellulose',art:molSVG('cellulose')}]});
+  doneBar(el,'Two of these are energy storage. One is a building material. Guess which one your enzymes cannot touch?',next)},
+(el,next)=>{brief(el,'Digestible or not?','Stamp each polysaccharide. Can a human digest it?','spongeThink');
+  const D=[['amylopectin','Starch',1,'Yes. Your enzymes break starch into glucose for energy.'],['glycogen','Glycogen',1,'Yes. Glycogen is digestible.'],['cellulose','Cellulose',0,'No. Humans cannot digest cellulose. That is what makes it fiber.']];let left=3;
+  const row=h('<div class="row"></div>');el.append(row);
+  D.forEach(d=>{const c=h(`<div class="mol" style="flex:1;min-width:230px">${molSVG(d[0])}<h3 style="font-size:1.3rem;margin:4px 0 8px">${d[1]}</h3><div class="center"><button class="btn sm yellow">We can digest it</button><button class="btn sm orange">We cannot</button></div><div class="out" style="min-height:44px"></div></div>`);row.append(c);let miss=false;
+    $$('button',c).forEach((b,k)=>b.onclick=()=>{const g=k===0?1:0;if(g===d[2]){mark(!miss,T2);$$('button',c).forEach(x=>x.disabled=true);$('.out',c).innerHTML=`<span class="stampd ${d[2]?'y':'n'}">${d[2]?'DIGESTIBLE':'INDIGESTIBLE'}</span>`;fb(el,true,d[3]);sfx.chunk();if(!--left)doneBar(el,'Starch and glycogen: energy storage, digestible. Cellulose: structural support, indigestible. That difference is the heart of Level 1.',next,'Finish job')}else{miss=true;sfx.no();nudge(c);fb(el,false,'Think about its job. Is it stored energy, or a building material?')}})})}
+]});
+
+/* ---------- M3: Super-Glue Squad ---------- */
+const hexHTML=(cls='')=>`<div class="hex ${cls}"><i class="stub"></i></div>`;
+/* two glucose rings joined by a glycosidic bond. alpha: both rings the same way up, link dips in a V. beta: second ring flipped, link zigzags */
+function bondArt(beta){const hex=(cx,flip,col)=>{const r=34,p=[[cx-r,65],[cx-r/2,65-r*.87],[cx+r/2,65-r*.87],[cx+r,65],[cx+r/2,65+r*.87],[cx-r/2,65+r*.87]].map(q=>q.join(',')).join(' '),y=flip?65+r*.87:65-r*.87,d=flip?1:-1;
+    return `<polygon points="${p}" fill="${col}" stroke="#12263f" stroke-width="3" stroke-linejoin="round"/><line x1="${cx+r/2}" y1="${y}" x2="${cx+r/2}" y2="${y+d*15}" stroke="#12263f" stroke-width="3"/><circle cx="${cx+r/2}" cy="${y+d*20}" r="6" fill="#fff" stroke="#12263f" stroke-width="3"/><text x="${cx}" y="70" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">glucose</text>`};
+  const path=beta?'M98 65L107 34 137 96 146 65':'M98 65L122 104 146 65',oy=beta?65:104;
+  return `<svg viewBox="0 0 244 132" role="img" aria-label="${beta?'Beta glycosidic bond: the second glucose is flipped upside down and the link between them zigzags':'Alpha glycosidic bond: both glucose rings face the same way and the link between them dips down in a V'}">${hex(64,false,beta?'#e8693a':'#4b9cd3')}${hex(180,beta,beta?'#b9471d':'#4b9cd3')}<path d="${path}" fill="none" stroke="#f7c531" stroke-width="13" stroke-linejoin="round" stroke-linecap="round" opacity=".75"/><path d="${path}" fill="none" stroke="#12263f" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="122" cy="${oy}" r="11" fill="#fff" stroke="#12263f" stroke-width="3"/><text x="122" y="${oy+4.5}" text-anchor="middle" font-size="13" font-weight="700">O</text></svg>`}
+
+M.push({id:'glue',level:1,kind:'Build · Experiment · Sort',title:'Super-Glue Squad',blurb:'Build a glycosidic bond, then play the enzyme and find out why fiber will not snap.',art:A.enzyme,bg:'#e8dcf7',steps:[
+async(el,next)=>{brief(el,'Link the sugars','To join two glucose molecules, a water molecule has to be removed from between them. Tap the two pieces that leave together as water.','sponge');
+  const lab=h(`<div class="lab"><div class="hexrow" style="padding-top:26px"><div class="hex"><button class="atom dec" style="top:-22px;left:8px">CH₂OH</button></div></div><div class="energy">Water molecules removed: <b id="wc" style="font-family:var(--display);font-size:1.4rem">0</b></div></div>`);el.append(lab);const row=$('.hexrow',lab);let round=0;
+  const dec=b=>b.onclick=()=>{nudge(b);sfx.no();lab._miss=true;fb(el,false,'That group stays put. Look in the space between the two sugars.')};dec($('.dec',lab));
+  await new Promise(done=>{const add=()=>{lab._miss=false;const got={};
+    const gap=h(`<div class="gap"><button class="atom" data-a="OH" style="left:0;top:26px">OH</button><button class="atom" data-a="H" style="right:34px;top:26px">H</button><button class="atom" data-a="O" style="right:0;top:26px">O</button><span class="o">O</span></div>`),hx=h(`<div class="hex"><button class="atom dec" style="top:-22px;left:8px">CH₂OH</button></div>`);row.append(gap,hx);dec($('.dec',hx));
+    $$('.atom',gap).forEach(b=>b.onclick=async()=>{const a=b.dataset.a;if(a==='O'){nudge(b);sfx.no();lab._miss=true;fb(el,false,'That oxygen stays behind. It becomes the bridge that holds the sugars together.');return}
+      got[a]=!got[a];b.classList.toggle('sel',got[a]);sfx.click();if(got.OH&&got.H){mark(!lab._miss,T3);$$('.atom',gap).forEach(x=>{x.classList.add('gone');x.disabled=true});const d=h(`<div class="drop" style="left:30px;top:10px">${A.drop}</div>`);gap.append(d);sfx.splash();await wait(500);gap.classList.add('joined');$('#wc',lab).textContent=++round;fb(el,true,'H + OH leave as water, and an oxygen bridge is left behind. That connection is a glycosidic bond.');await wait(1300);d.remove();round<2?add():done()}})};add()});
+  await pick(el,{topic:T3,q:'Removing water to link sugars together is called…',opts:['Dehydration synthesis','Peristalsis','Digestion','Hydration'],a:0,why:'Dehydration = losing water. Synthesis = building something.'});
+  await pick(el,{topic:T3,q:'In carbohydrates, the connection that forms between two sugars is a…',opts:['Glycosidic bond','Peptide bond','Super-glue bond','Cell wall'],a:0,why:'Glycosidic bonds hold every polysaccharide together, including starch, glycogen and cellulose.'});
+  doneBar(el,'You just built a polysaccharide the same way a plant does.',next)},
+async(el,next)=>{brief(el,'You are the enzyme','Your body uses enzymes to snap sugar chains apart. Tap a bond to bite it. Try every bond in both chains and watch what happens.','broom');
+  el.append(h(`<div class="row" style="margin-bottom:14px"><div class="panel" style="flex:1;min-width:260px;padding:10px"><img src="${IMG.lego}" alt="Loosely connected Lego bricks labeled starch with weak bonds, next to a solid Lego wall held with super glue labeled cellulose fiber with strong bonds" style="border-radius:12px;display:block"></div><div class="panel" style="flex:1;min-width:260px"><h3 style="font-size:1.25rem;margin-bottom:6px">Same bricks, different glue</h3><p>Starch is like Lego bricks connected loosely, so your enzymes snap them apart with ease. Fiber is made of the very same sugar bricks, but its bonds point a different way, as if the Legos were super-glued together.</p></div></div>`));
+  const lab=h(`<div class="lab"><div class="enz" style="left:10px;top:6px">${A.enzyme}</div><p style="font-weight:700;margin-left:112px">Chain 1: starch, held by α-glycosidic bonds</p><p class="note" style="margin-left:112px">Every glucose faces the same way up, so each bond dips down in a V.</p><div class="hexrow" id="rA"></div><p style="font-weight:700;margin:6px 0 0 112px">Chain 2: cellulose (fiber), held by β-glycosidic bonds</p><p class="note" style="margin-left:112px">Every other glucose is flipped upside down, so the bonds zigzag.</p><div class="hexrow" id="rB"></div><div class="energy">Glucose released for energy <div class="meter"><i style="width:0"></i></div><b id="ec">0 of 4 bonds snapped</b></div></div>`);el.append(lab);
+  const bA=`<svg viewBox="0 0 44 60"><path d="M2 22L22 44 42 22" fill="none" stroke="#12263f" stroke-width="4" stroke-linejoin="round"/><circle cx="22" cy="44" r="9" fill="#f7c531" stroke="#12263f" stroke-width="3"/><text x="22" y="49" text-anchor="middle" font-size="12" font-weight="700">O</text></svg>`,bB=`<svg viewBox="0 0 44 60"><path d="M2 46L18 46 26 14 42 14" fill="none" stroke="#12263f" stroke-width="4" stroke-linejoin="round"/><circle cx="22" cy="30" r="9" fill="#f7c531" stroke="#12263f" stroke-width="3"/><text x="22" y="35" text-anchor="middle" font-size="12" font-weight="700">O</text></svg>`;
+  let broke=0,bonks=0,fin=false;const enz=$('.enz',lab),face=m=>{$('img',enz).src=`img/enzyme-${m}.webp`};['chomp','dazed'].forEach(m=>{new Image().src=`img/enzyme-${m}.webp`});
+  const mk=(row,isB)=>{for(let i=0;i<5;i++){row.insertAdjacentHTML('beforeend',hexHTML((isB?'b ':'')+(isB&&i%2?'inv':'')));if(i<4){const b=h(`<button class="bond" aria-label="${isB?'beta':'alpha'} glycosidic bond ${i+1}">${isB?bB:bA}</button>`);row.append(b);b.onclick=async()=>{const r=b.getBoundingClientRect(),L=lab.getBoundingClientRect();enz.style.left=((r.left-L.left)/Z-58)+'px';enz.style.top=((r.top-L.top)/Z-18)+'px';face('ready');await wait(380);
+      if(isB){bonks++;enz.classList.add('bonk');face('dazed');clearTimeout(enz._t);enz._t=setTimeout(()=>face('ready'),1600);sfx.no();fb(el,false,'Clank! Your enzyme does not fit a β-glycosidic bond. Humans simply do not make an enzyme that can break it.');setTimeout(()=>enz.classList.remove('bonk'),520)}
+      else{clearTimeout(enz._t);enz.classList.add('bite');face('chomp');sfx.snap();await wait(520);enz.classList.remove('bite');face('ready');b.classList.add('broken');b.disabled=true;broke++;$('.meter i',lab).style.width=broke*25+'%';$('#ec',lab).textContent=broke+' of 4 bonds snapped';fb(el,true,'Snap! α-glycosidic bonds come apart easily, releasing glucose your body can use for energy.')}
+      if(!fin&&broke===4&&bonks>=2){fin=true;await wait(600);await pick(el,{topic:T3,q:'Humans cannot break β-glycosidic bonds. What is the end result for the fiber you eat?',opts:['It travels through the stomach and small intestine fully intact','It is slowly turned into glycogen and stored in the liver','It is broken into glucose and absorbed for energy','It dissolves completely in the stomach'],a:0,why:'No enzyme, no digestion. Fiber leaves the small intestine in one piece.'});doneBar(el,'Starch: α bonds, loose Legos, digestible. Fiber: β bonds, super-glued, indigestible.',next)}}}}};
+  mk($('#rA',lab),false);mk($('#rB',lab),true)},
+async(el,next)=>{brief(el,'Loose Lego or super-glue?','Last check. Study the two bond pictures first: they are built differently. Then sort each clue by the kind of bond it describes.','broomThink');
+  await sortGame(el,{topic:T3,items:[{html:'Holds starch together',bin:'a'},{html:'Holds cellulose (fiber) together',bin:'b'},{html:'Human enzymes snap it apart easily',bin:'a'},{html:'Humans lack the enzyme to break it',bin:'b'},{html:'Breaking it releases glucose for energy',bin:'a'},{html:'Why fiber leaves the small intestine fully intact',bin:'b'},{html:'Like Legos connected loosely',bin:'a'},{html:'Like Legos super-glued together',bin:'b'}],
+    bins:[{id:'a',label:'α-glycosidic bond',sub:'alpha: both sugars face the same way and the link dips in a V',art:bondArt(false)},{id:'b',label:'β-glycosidic bond',sub:'beta: the second sugar is flipped and the link zigzags',art:bondArt(true)}]});
+  doneBar(el,'Level 1 unlocked in your brain: you can explain how fiber differs from starch and glycogen, right down to the bond.',next,'Finish job')}
+]});
+
+/* ---------- M4: Sponge & Broom ---------- */
+const duoBins=[{id:'s',label:'Soluble fiber',sub:'the sponge',art:A.spongeGel,cls:'sponge'},{id:'i',label:'Insoluble fiber',sub:'the broom',art:A.broomSweep,cls:'broom'}];
+M.push({id:'duo',level:2,kind:'Experiment · Sort · Speed round',title:'The Dynamic Duo',blurb:'Meet the sponge and the broom, run the splash test, and stock both teams with food.',art:A.sponge+A.broom,bg:'#fff1b8',steps:[
+(el,next)=>{brief(el,'Meet the crew leaders','Not all fiber behaves the same way. Scientists split fiber into two teams based on how each one reacts to water. Flip both cards to read their files.','sponge');
+  const row=h('<div class="row" style="justify-content:center"></div>');el.append(row);let seen=new Set();
+  [['soluble','Soluble fiber','The Sponge','Fiber characters floating down a blue river inside the intestine, turning into gel',['Dissolves in water and becomes a gel','Slows digestion, which helps regulate blood sugar and insulin spikes','Its stickiness binds cholesterol and pulls it out of the blood','Oats, peas, beans, apples, citrus'],'#fff1b8'],['insoluble','Insoluble fiber','The Broom','Celery-shaped brooms sweeping through an S-shaped colon, pushing bulky stool along',['Does not dissolve in water; stays intact','Adds bulk and mass to your stool','More pressure on the colon walls triggers peristalsis','Whole wheat, nuts, seeds, potato skins, peels'],'#ffdcc4']].forEach((c,i)=>{
+    const b=h(`<button class="flip" aria-label="${c[1]} file. Tap to flip."><span class="in"><span class="f" style="background-image:url(${IMG[c[0]]})" role="img" aria-label="${c[3]}"><span>${c[1]} · tap to flip</span></span><span class="bk" style="background:${c[5]}"><h3>${c[2]}</h3><b>${c[1]}</b><ul>${c[4].map(x=>`<li>${x}</li>`).join('')}</ul></span></span></button>`);
+    b.onclick=()=>{b.classList.toggle('on');sfx.pop();seen.add(i);if(seen.size===2&&!el._d){el._d=1;doneBar(el,'To stay healthy you need both: a sponge and a broom.',next,'Run the splash test')}};row.append(b)})},
+async(el,next)=>{brief(el,'The splash test','Two mystery fiber samples just arrived at the lab. Drop each one into water and watch closely. How a fiber reacts to water tells you which team it is on.','broom');
+  const w=h(`<div class="panel"><div class="beakers">${['A','B'].map(x=>`<div class="bk-wrap"><div class="beaker" id="bk${x}"><div class="water"></div><div class="wob">gel</div></div><button class="btn sm ${x==='A'?'yellow':'orange'}">Drop in Sample ${x}</button><p class="note" id="nt${x}" style="min-height:3em;max-width:220px;margin:6px auto 0"></p></div>`).join('')}</div></div>`);el.append(w);let done=0;
+  await new Promise(r=>$$('.bk-wrap',w).forEach((bw,k)=>{$('button',bw).onclick=async e=>{e.target.disabled=true;const bk=$('.beaker',bw);sfx.splash();for(let i=0;i<10;i++){const b=h('<i class="bit"></i>');b.style.left=(12+Math.random()*70)+'%';bk.append(b);await wait(60);b.style.top=(k?32+Math.random()*58:40+Math.random()*50)+'%';b.style.transform=`rotate(${Math.random()*180}deg)`}
+    await wait(1500);if(!k){bk.classList.add('gel');$('#ntA',w).textContent='Sample A dissolved. The water thickened into a wobbly gel.'}else $('#ntB',w).textContent='Sample B did not dissolve. Every piece is still intact.';if(++done===2)r()}}));
+  el.append(h('<p class="q" style="margin:14px 0 8px">Now file the lab report.</p>'));
+  await sortGame(el,{topic:T4,items:[{html:'Sample A',bin:'s'},{html:'Sample B',bin:'i'},{html:'Dissolves and becomes a gel',bin:'s'},{html:'Does not dissolve; stays intact',bin:'i'},{html:'Nicknamed the sponge',bin:'s'},{html:'Nicknamed the broom',bin:'i'}],bins:duoBins});
+  doneBar(el,'Soluble means it dissolves. Insoluble means it does not. The names tell you the whole story.',next)},
+async(el,next)=>{brief(el,'Stock the pantry','Each team gets its fiber from different foods. Send every food to the team it feeds.','sponge');
+  const F=[['oats','Oats','s'],['peas','Peas','s'],['beans','Beans','s'],['apples','Apples','s'],['citrus','Citrus','s'],['wheat','Whole wheat','i'],['nuts','Nuts','i'],['seeds','Seeds','i'],['potato','Potato skins','i'],['peels','Peels','i']];
+  await sortGame(el,{topic:T5,items:F.map(f=>({html:A.food[f[0]]+f[1],bin:f[2],why:`${f[1]}: ${f[2]==='s'?'soluble':'insoluble'} fiber.`})),bins:duoBins});
+  doneBar(el,'Soft, gel-friendly foods feed the sponge. Tough skins, husks and shells feed the broom.',next)},
+(el,next)=>{brief(el,'Sponge or broom? Speed round','A clue card drops. Send it left to the sponge or right to the broom. Use the buttons or your arrow keys. Build a streak!','broom');
+  const Q=shuffle([['Slows digestion','s'],['Helps regulate blood sugar and insulin spikes','s'],['Binds cholesterol and pulls it out of the blood','s'],['Lowers the risk of heart disease','s'],['Turns into a gel in water','s'],['You find it in oats, beans and apples','s'],['Adds bulk and mass to your stool','i'],['Pressure on the colon walls triggers peristalsis','i'],['The key to preventing constipation','i'],['Stays intact in water','i'],['You find it in whole wheat, nuts and seeds','i'],['You find it in potato skins and peels','i']]).slice(0,10);
+  let i=0,streak=0,busy=false;const w=h(`<div><div class="rapid"><button class="side" id="rs">${A.spongeGel}<b>Sponge</b>soluble<br><kbd>← left arrow</kbd></button><div class="rcard in" aria-live="polite"></div><button class="side r" id="rb">${A.broomSweep}<b>Broom</b>insoluble<br><kbd>right arrow →</kbd></button></div><p class="streak"></p></div>`);el.append(w);const card=$('.rcard',w);
+  const showQ=()=>{card.className='rcard in';card.textContent=Q[i][0];busy=false;sfx.whoosh()};
+  const ans=async g=>{if(busy||i>=Q.length)return;busy=true;const ok=g===Q[i][1];mark(ok,T4);streak=ok?streak+1:0;if(ok&&streak>=3)cur.bonus+=5;$('.streak',w).textContent=streak>=3?`${streak} in a row! +5 bonus shine`:streak?`Streak: ${streak}`:'';
+    fb(w,ok,ok?'Right team!':`That one belongs to the ${Q[i][1]==='s'?'sponge (soluble)':'broom (insoluble)'}.`);card.classList.add(Q[i][1]==='s'?'goL':'goR');await wait(ok?450:1300);i++;if(i>=Q.length){card.className='rcard';card.textContent='Round over!';document.removeEventListener('keydown',key);doneBar(el,'You can tell the sponge from the broom at full speed. That is Level 2.',next,'Finish job')}else showQ()};
+  const key=e=>{if(e.key==='ArrowLeft'){e.preventDefault();ans('s')}if(e.key==='ArrowRight'){e.preventDefault();ans('i')}};document.addEventListener('keydown',key);game.stop=()=>document.removeEventListener('keydown',key);
+  $('#rs',w).onclick=()=>ans('s');$('#rb',w).onclick=()=>ans('i');showQ()}
+]});
+
+/* ===== Go Fiber! and the Level 3 simulators ===== */
+const TV='Key vocabulary',T6='Blood sugar and insulin',T7='Cholesterol and heart health',T8='Peristalsis and constipation',T9='Explaining fiber and health';
+const VOCAB=[['Dietary fiber','The carbohydrate humans cannot digest. It passes through the body almost unchanged.'],['Polysaccharide','A complex carbohydrate made of long chains of glucose.'],['Starch','How plants store energy. Found in potatoes, grains and roots.'],['Glycogen','How animals store energy. Found in the liver and skeletal muscles.'],['Cellulose','Gives plants structural support. Found in plant cell walls.'],['Glycosidic bond','The connection that links one sugar to the next in a carbohydrate.'],['Dehydration synthesis','Joining two sugars by removing a water molecule from between them.'],['Enzyme','The tool your body uses to snap the bonds in starch apart.'],['Soluble fiber','Dissolves in water and becomes a gel. The sponge.'],['Insoluble fiber','Does not dissolve in water. Adds bulk to stool. The broom.'],['Peristalsis','Smooth muscle contractions in the colon wall that keep stool moving.'],['Cholesterol','The substance that sticky soluble fiber binds and pulls out of the blood.']];
+
+M.push({id:'gofiber',level:2,kind:'Card game · Vocabulary',title:'Go Fiber!',blurb:'Go Fish with a twist. Match each term to its definition before Bran-don the muffin does.',art:A.muffin,bg:'#f3dfc4',steps:[
+(el,next)=>{brief(el,'Go Fiber!','Make pairs: a term plus its definition. On your turn, tap a card and ask Bran-don for its match. If he does not have it, you Go Fiber and draw from the pond. Most pairs wins.','sponge');
+  const V=shuffle(VOCAB).slice(0,10),deck=shuffle(V.flatMap((v,i)=>[{p:i,t:'t',x:v[0]},{p:i,t:'d',x:v[1]}]));
+  const P=deck.splice(0,5),O=deck.splice(0,5),pond=deck,known=new Set();let bp=0,bo=0,sel=null,phase='you',busy=false,oppAsk=null,oppRun=0;
+  const w=h(`<div class="gf"><div class="gf-opp"><div class="face">${A.muffin}</div><div class="bubble" aria-live="polite">Deal me in! You go first.</div><div class="backs" aria-hidden="true"></div></div>
+   <div class="gf-mid"><div class="tally">Your pairs<b id="tp">0</b></div><div class="pond"><span>Pond</span><span id="pc"></span></div><div class="tally">Bran-don’s pairs<b id="to">0</b></div></div><div class="gf-ask"></div><div class="hand" aria-label="Your hand"></div></div>`);el.append(w);
+  const ask=$('.gf-ask',w),hand=$('.hand',w),mate=c=>x=>x.p===c.p&&x.t!==c.t,end=()=>bp+bo===V.length;
+  ['surprised','sulking','celebrating'].forEach(m=>{new Image().src=`img/bran-${m}.webp`});
+  const say=(t,mood='confident')=>{$('.bubble',w).textContent=t;const f=$('.face',w);$('img',f).src=`img/bran-${mood}.webp`;f.classList.remove('talk');void f.offsetWidth;f.classList.add('talk')};
+  const fish=to=>{if(!pond.length)return null;const c=pond.pop();c.nw=true;to.push(c);const p=$('.pond',w);p.classList.remove('rip');void p.offsetWidth;p.classList.add('rip');sfx.splash();return c};
+  const draw=()=>{$('#tp',w).textContent=bp;$('#to',w).textContent=bo;$('#pc',w).textContent=pond.length+' cards';$('.backs',w).innerHTML=O.map(()=>'<i></i>').join('');hand.innerHTML='';
+    P.forEach(c=>{const b=h(`<button class="card ${c.t}${c===sel?' sel':''}${c.nw?' new':''}${c.glow?' glow':''}"><em>${c.t==='t'?'Term':'Definition'}</em>${c.x}</button>`);c.nw=false;b.onclick=()=>tap(c);hand.append(b)});if(!P.length)hand.innerHTML='<p class="note" style="align-self:center">Your hand is empty.</p>'};
+  const finishGame=()=>{phase='over';sel=null;draw();ask.innerHTML='';if(bp>bo)cur.bonus+=30;say(bp>bo?'Out-fished by a recruit. Respect!':bp===bo?'A tie! Rematch sometime?':'I win this round. Come back with more fiber in your diet!',bp>bo?'surprised':bp===bo?'confident':'celebrating');doneBar(el,`Final count: you ${bp}, Bran-don ${bo}. ${bp>bo?'You win, +30 bonus shine!':'Every pair you made still earned shine.'}`,next,'Finish job')};
+  const youTurn=()=>{if(end())return finishGame();phase='you';sel=null;oppRun=0;if(!P.length)fish(P);if(!P.length)return oppTurn();draw();ask.innerHTML='<p class="q">Your turn. Tap a card in your hand to go fishing for its match.</p>'};
+  const tap=c=>{if(busy)return;if(phase==='opp')return answer(c);if(phase!=='you')return;sfx.click();
+    if(sel&&sel!==c&&P.some(mate(sel))){const a=sel;if(c.p===a.p){mark(true,TV);P.splice(P.indexOf(a),1);P.splice(P.indexOf(c),1);bp++;cur.bonus+=10;say('Whoa. You had that pair the whole time?','surprised');fb(w,true,'Pair! You laid down a term with its definition. Keep going.');return youTurn()}mark(false,TV);sel=null;draw();fb(w,false,'Those two are not a match. Read both cards again.');ask.innerHTML='<p class="q">Tap a card in your hand to go fishing for its match.</p>';return}
+    sel=sel===c?null:c;draw();if(!sel){ask.innerHTML='<p class="q">Tap a card in your hand to go fishing for its match.</p>';return}
+    if(P.some(mate(c))){ask.innerHTML=`<p class="q">Wait! The match for “${esc(c.x)}” is already in your hand. Tap it to lay down the pair.</p>`;return}
+    const side=c.t==='t'?1:0,need=V[c.p][side],others=shuffle(V.map((v,i)=>i).filter(i=>i!==c.p)).slice(0,2).map(i=>V[i][side]);
+    ask.innerHTML=`<p class="q">You are fishing for the match to “${esc(c.x)}”. Which card will you ask Bran-don for?</p><div class="opts"></div>`;
+    shuffle([need,...others]).forEach(o=>{const b=h(`<button class="opt">${o}</button>`);b.onclick=()=>askOpp(c,o===need,need);$('.opts',ask).append(b)})};
+  const askOpp=async(c,ok,need)=>{if(busy)return;busy=true;known.add(c.p);$$('.opt',ask).forEach(b=>b.disabled=true);
+    if(!ok){mark(false,TV);fb(w,false,`Not its match. “${c.x}” goes with: ${need} Your turn is over.`);await wait(2600);busy=false;return oppTurn()}
+    mark(true,TV);const k=O.findIndex(mate(c));
+    if(k>-1){O.splice(k,1);P.splice(P.indexOf(c),1);bp++;cur.bonus+=10;say('Aw, crumbs. Here you go.','sulking');fb(w,true,'Bran-don had it! That is a pair for you. Go again.');busy=false;return youTurn()}
+    say('Go Fiber!');await wait(800);const d=fish(P);sel=null;draw();fb(w,true,d?'Right card to ask for, but Bran-don does not have it. You drew a card from the pond.':'Right card to ask for, but Bran-don does not have it and the pond is empty.');await wait(1700);busy=false;oppTurn()};
+  const oppTurn=async()=>{if(end())return finishGame();phase='wait';sel=null;oppRun++;draw();ask.innerHTML='<p class="q">Bran-don is thinking…</p>';await wait(900);
+    for(;;){const i=O.findIndex((c,k)=>O.some((d,j)=>j!==k&&d.p===c.p));if(i<0)break;const p=O[i].p;for(let k=O.length-1;k>=0;k--)if(O[k].p===p)O.splice(k,1);bo++;say('Ha! I had a pair hiding in my own hand.','celebrating');draw();await wait(1400);if(end())return finishGame()}
+    if(!O.length)fish(O);if(!O.length)return youTurn();if(!P.length)fish(P);
+    const pref=O.filter(c=>known.has(c.p)),pool=pref.length?pref:O;oppAsk=pool[Math.floor(Math.random()*pool.length)];phase='opp';draw();
+    say(`Do you have the match for: “${oppAsk.x}”`);ask.innerHTML=`<p class="q">Bran-don wants the match for “${esc(oppAsk.x)}”. If you have it, tap that card to hand it over. If not, send him fishing.</p><div class="center" style="margin-top:10px"><button class="btn orange" id="gofib">Go Fiber! I do not have it</button></div>`;$('#gofib',ask).onclick=()=>answer(null)};
+  const answer=async card=>{if(busy||phase!=='opp')return;busy=true;const c=oppAsk,m=P.find(mate(c)),ok=card?card===m:!m;mark(ok,TV);const gb=$('#gofib',ask);if(gb)gb.disabled=true;
+    if(m){m.glow=true;draw();fb(w,ok,ok?'Good eye. That is the match, so Bran-don takes the pair.':card?`Not that card. He needed “${m.x}” and you were holding it.`:`Caught! You were holding the match: “${m.x}”`);await wait(ok?1100:2600);m.glow=false;P.splice(P.indexOf(m),1);O.splice(O.indexOf(c),1);bo++;known.delete(c.p);say('Yum. A pair for me!','celebrating');draw();await wait(700);busy=false;return oppRun<2?oppTurn():youTurn()}
+    fb(w,ok,ok?'Correct, you do not have it. Bran-don goes fishing.':'That card is not its match, and you are not holding the match at all. Bran-don goes fishing.');say('Fine, I will Go Fiber.','sulking');fish(O);draw();await wait(ok?1100:2400);busy=false;youTurn()};
+  youTurn()}
+]});
+
+/* ---------- M6: Body Works ---------- */
+M.push({id:'body',level:3,kind:'Simulators · Arcade',title:'Body Works',blurb:'Flatten a blood sugar spike, catch cholesterol as the sponge, and pump the colon as the broom.',art:'<img src="img/card-body.webp" alt="">',bg:'#ffd9d2',steps:[
+/* sugar coaster */
+async(el,next)=>{brief(el,'Tame the Sugar Coaster','This graph models blood sugar after breakfast. Add soluble fiber to the meal with the slider until the ride stays out of the red spike zone.','sponge');
+  const X=t=>60+t/180*560,Y=g=>250-(g-60)/140*230,G=(t,f)=>{const A=95-6.5*f,tp=30+5*f,C=Math.max(0,22*(1-f/8));return 90+A*(t/tp)*Math.exp(1-t/tp)-C*Math.exp(-(((t-(130+4*f))/28)**2))};
+  const path=f=>{let d='';for(let t=0;t<=180;t+=2)d+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(G(t,f)).toFixed(1);return d};
+  const w=h(`<div><div class="graph"><svg viewBox="0 0 640 300" role="img" aria-label="Line graph of blood sugar over three hours after breakfast"><rect x="60" y="20" width="560" height="${(Y(140)-20).toFixed(1)}" fill="#fde4e1"/><text x="612" y="38" text-anchor="end" font-size="13" font-weight="700" fill="#c93a3a">SPIKE ZONE</text>
+   ${[60,100,140,180].map(g=>`<line x1="60" x2="620" y1="${Y(g)}" y2="${Y(g)}" stroke="#c9dcec"/><text x="52" y="${Y(g)+4}" text-anchor="end" font-size="12">${g}</text>`).join('')}${[0,30,60,90,120,150,180].map(t=>`<text x="${X(t)}" y="268" text-anchor="middle" font-size="12">${t}</text>`).join('')}
+   <text x="340" y="290" text-anchor="middle" font-size="13" font-weight="700">Minutes after breakfast</text><text transform="rotate(-90 16 135)" x="16" y="135" text-anchor="middle" font-size="13" font-weight="700">Blood sugar (mg/dL)</text>
+   <line x1="60" x2="620" y1="${Y(140)}" y2="${Y(140)}" stroke="#c93a3a" stroke-width="2" stroke-dasharray="6 5"/><path d="${path(0)}" fill="none" stroke="#9bb1c7" stroke-width="3" stroke-dasharray="4 6"/><text x="${X(52)}" y="${Y(176)}" font-size="12" fill="#3d5370">no-fiber breakfast</text>
+   <path id="cv" d="${path(0)}" fill="none" stroke="#12263f" stroke-width="5" stroke-linejoin="round"/><circle id="car" r="10" fill="#f7c531" stroke="#12263f" stroke-width="3"/></svg><p class="note" style="text-align:center">A simplified model for learning, not real patient data.</p></div>
+   <div class="slider"><label for="fs"><b style="font-size:1rem;font-family:var(--body);font-weight:700">Soluble fiber in this breakfast</b></label><input id="fs" type="range" min="0" max="10" value="0" step="1"><b id="fv">0 g</b><span id="meal" style="flex-basis:100%;font-weight:700"></span><span id="peak" style="flex-basis:100%"></span></div></div>`);el.append(w);
+  let f=0,t0=performance.now(),run=true,won=false;const car=$('#car',w);game.stop=()=>run=false;
+  const tick=n=>{if(!run)return;const t=S.set.calm?30+5*f:((n-t0)/22)%180;car.setAttribute('cx',X(t));car.setAttribute('cy',Y(G(t,f)));requestAnimationFrame(tick)};requestAnimationFrame(tick);
+  await new Promise(r=>{const up=()=>{f=+$('#fs',w).value;$('#fv',w).textContent=f+' g';$('#cv',w).setAttribute('d',path(f));const pk=Math.round(90+95-6.5*f);$('#meal',w).textContent='Menu: '+(f<=2?'sugary cereal and juice':f<=5?'cereal topped with apple slices':f<=7?'a bowl of oatmeal with apple':'oatmeal with apple, plus a side of beans');$('#peak',w).innerHTML=`Peak: <b style="font-size:1.1rem">${pk} mg/dL</b> at about ${30+5*f} minutes`;
+    if(pk<140&&!won){won=true;fb(w,true,'The ride is out of the spike zone! More soluble fiber, gentler hill.');sfx.ok();r()}};$('#fs',w).addEventListener('input',up);up()});
+  await pick(el,{topic:T6,q:'Compare your high-fiber curve with the dotted no-fiber curve. The high-fiber ride peaks…',opts:['lower and later','higher and sooner','lower and sooner','at the same height, only later'],a:0,why:'A lower, later peak means glucose entered the blood gradually.'});
+  await clozeGame(el,{topic:T6,text:'Soluble fiber dissolves into a [gel] that [slows] digestion. Glucose then enters the blood gradually, which helps the body regulate blood sugar and [insulin] spikes.',bank:['bulk','speeds up','cholesterol','stops']});
+  doneBar(el,'Benefit one, explained: soluble fiber slows digestion and smooths out blood sugar and insulin spikes.',next)},
+/* cholesterol catch */
+async(el,next)=>{brief(el,'Cholesterol Catch','Cholesterol drifts toward the intestine wall, where it is absorbed into the blood. In round 2 you are the sticky sponge. Move with your mouse, finger, or arrow keys and grab every bit you can.','spongeGel');
+  const w=h(`<div><canvas class="game" width="720" height="300" tabindex="0" aria-label="Cholesterol catching game. Use arrow keys to move the sponge."></canvas><div class="center" style="margin-top:12px"><button class="btn orange" id="r1">Start round 1: no fiber</button><button class="btn yellow" id="r2" disabled>Start round 2: be the sponge</button></div><div id="res"></div></div>`);el.append(w);
+  const cv=$('canvas',w),c=cv.getContext('2d');let run=false,sp={x:360,y:150,on:false},keys={},out={};const bg=new Image(),spI=new Image();bg.src='img/channel.webp';spI.src='img/sponge-gel.webp';bg.onload=()=>{if(!run)scene([],0,0)};game.stop=()=>{run=false;document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku)};
+  const kd=e=>{if(run&&e.key.startsWith('Arrow')){keys[e.key]=1;e.preventDefault()}},ku=e=>{keys[e.key]=0};document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);
+  cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();sp.x=(e.clientX-r.left)/r.width*720;sp.y=Math.max(110,Math.min(190,(e.clientY-r.top)/r.height*300))});
+  const scene=(ps,stuck,ab)=>{c.clearRect(0,0,720,300);c.fillStyle='#fecccd';c.fillRect(0,0,720,300);if(bg.complete&&bg.naturalWidth){const H=bg.naturalHeight,W=bg.naturalWidth;c.drawImage(bg,0,0,W,H*.37,0,0,720,100);c.drawImage(bg,0,H*.63,W,H*.37,0,200,720,100)}else{c.fillStyle='#b23a3a';c.fillRect(0,0,720,84);c.fillRect(0,216,720,84)}
+    c.font='700 14px '+CF;const lab=`Blood vessels in the intestine wall · cholesterol absorbed: ${ab}`,lw=c.measureText(lab).width;c.fillStyle='rgba(18,38,63,.85)';c.beginPath();c.roundRect(10,8,lw+20,26,13);c.fill();c.fillStyle='#fff';c.fillText(lab,20,26);
+    ps.forEach(p=>{if(p.dead)return;c.beginPath();c.arc(p.x,p.y,9,0,7);c.fillStyle='#f7c531';c.fill();c.lineWidth=2.5;c.strokeStyle='#12263f';c.stroke();c.fillStyle='#12263f';c.font='700 11px '+CF;c.fillText('C',p.x-4,p.y+4)});
+    if(sp.on){c.beginPath();c.arc(sp.x,sp.y,36,0,7);c.fillStyle='rgba(159,211,245,.45)';c.fill();c.lineWidth=2;c.strokeStyle='rgba(75,156,211,.9)';c.stroke();if(spI.complete&&spI.naturalWidth)c.drawImage(spI,sp.x-33,sp.y-33,66,66);else{c.beginPath();c.arc(sp.x,sp.y,26,0,7);c.fillStyle='#f7c531';c.fill()}c.lineWidth=2;c.strokeStyle='#12263f';for(let i=0;i<stuck;i++){const a=i*2.4;c.beginPath();c.arc(sp.x+Math.cos(a)*32,sp.y+Math.sin(a)*32,5,0,7);c.fillStyle='#f7c531';c.fill();c.stroke()}}};
+  const round=(n,withSp)=>new Promise(r=>{const sl=S.set.calm?.55:1,ps=[];let fr=0,made=0,ab=0,got=0;sp.on=withSp;run=true;
+    const step=()=>{if(!run)return;fr++;if(made<n&&fr%(withSp?26:16)===1){made++;const y=112+Math.random()*76;ps.push({x:-10,y,vx:(1.7+Math.random()*.8)*sl,vy:(y<150?-1:1)*(.24+Math.random()*.22)*sl})}
+      if(withSp){sp.x+=((keys.ArrowRight||0)-(keys.ArrowLeft||0))*6;sp.y+=((keys.ArrowDown||0)-(keys.ArrowUp||0))*6;sp.x=Math.max(34,Math.min(686,sp.x));sp.y=Math.max(110,Math.min(190,sp.y))}
+      ps.forEach(p=>{if(p.dead)return;p.x+=p.vx;p.y+=p.vy;if(withSp&&Math.hypot(p.x-sp.x,p.y-sp.y)<40){p.dead=1;got++;sfx.pop()}else if(p.y<92||p.y>208){p.dead=1;ab++;sfx.absorb()}});
+      scene(ps,got,ab);if(made>=n&&ps.every(p=>p.dead)){run=false;r({ab,got,n})}else requestAnimationFrame(step)};requestAnimationFrame(step)});
+  sp.on=false;scene([],0,0);
+  await new Promise(r=>$('#r1',w).onclick=async e=>{e.target.disabled=true;out.a=await round(10,false);fb(w,false,`Yikes. With no soluble fiber on duty, ${out.a.ab} of ${out.a.n} bits of cholesterol were absorbed into the blood. Now try it as the sponge.`);$('#r2',w).disabled=false;$('#r2',w).focus();r()});
+  await new Promise(r=>$('#r2',w).onclick=async e=>{e.target.disabled=true;cv.focus();out.b=await round(24,true);r()});
+  const pa=Math.round(out.a.ab/out.a.n*100),pb=Math.round(out.b.ab/out.b.n*100);mark(out.b.got/out.b.n>=.6,T7,true);cur.bonus+=out.b.got*2;
+  $('#res',w).innerHTML=`<div class="panel" style="margin-top:12px"><p class="q">Cholesterol absorbed into the blood</p><div class="bars" role="img" aria-label="Bar chart. Without fiber ${pa} percent absorbed. With soluble fiber ${pb} percent absorbed."><div><i style="height:0"></i>No fiber: ${pa}%</div><div><i style="height:0"></i>With the sponge: ${pb}%</div></div></div>`;
+  setTimeout(()=>{const b=$$('.bars i',w);b[0].style.height=pa*1.3+'px';b[1].style.height=Math.max(4,pb*1.3)+'px'},60);fb(w,true,`You caught ${out.b.got} of ${out.b.n}. Sticky soluble fiber binds cholesterol and carries it out of the body.`);
+  await pick(el,{topic:T7,q:'Look at the two bars. Why does the second bar matter for long-term health?',opts:['Less cholesterol in the blood lowers the risk of heart disease','Less cholesterol in the blood prevents constipation','Cholesterol is what causes blood sugar spikes','The sponge turns cholesterol into extra energy'],a:0,why:'Binding cholesterol is how soluble fiber protects the heart.'});
+  doneBar(el,'Benefit two, explained: soluble fiber’s stickiness pulls cholesterol out of the blood, lowering the risk of heart disease.',next)},
+/* peristalsis pump */
+async(el,next)=>{brief(el,'Pump the colon','Stool has to be pushed out by the smooth muscle in the colon wall. Try squeezing the muscle right behind the stool. If nothing happens, figure out what the broom needs to do first.','broomSweep');
+  const names=['tiny','small','medium','bulky','extra bulky'];let bulk=0,pos=1,tried=false;
+  const w=h(`<div class="panel"><div class="gauge">Pressure on the colon wall <div class="meter"><i style="width:4%"></i></div><b id="pb">Stool is tiny</b><button class="btn sm orange" id="addf">Add insoluble fiber</button></div><div class="colon"><div class="tube">${[1,2,3,4,5,6].map(i=>`<button class="seg" aria-label="Squeeze muscle segment ${i}"><span>muscle ${i}</span></button>`).join('')}</div><div class="bolus"><i></i></div></div><p class="note">Tap the muscle segment just behind (to the left of) the stool to squeeze it forward toward the exit on the right.</p></div>`);el.append(w);
+  const segs=$$('.seg',w),bo=$('.bolus',w),upd=()=>{bo.style.left=pos*16.666+'%';$('i',bo).style.width=26+bulk*13+'px';$('i',bo).style.height=20+bulk*13+'px';$('.meter i',w).style.width=Math.max(4,bulk*25)+'%';$('#pb',w).textContent='Stool is '+names[bulk];segs.forEach((s,k)=>s.classList.toggle('target',bulk>=3&&k===pos-1))};upd();
+  $('#addf',w).onclick=e=>{if(bulk<4){bulk++;sfx.pop();upd();fb(w,true,bulk>=3?'Now the stool is bulky enough to press on the colon wall. The muscle can feel it! Squeeze the glowing segment.':'Insoluble fiber stays intact and adds bulk. Keep adding.')}if(bulk>=4)e.target.disabled=true};
+  await new Promise(r=>segs.forEach((s,k)=>s.onclick=async()=>{s.classList.add('sq');setTimeout(()=>s.classList.remove('sq'),320);
+    if(k!==pos-1){fb(w,false,'Squeeze the segment directly behind the stool to push it forward.');return}
+    if(bulk<3){tried=true;sfx.no();fb(w,false,'Nothing moved. The stool is too small to press against the colon wall, so the muscle never gets the signal to contract. That is constipation. What would add bulk?');return}
+    pos++;sfx.pop();upd();if(pos>5){await wait(300);bo.style.left='104%';fb(w,true,'Out it goes! Wave after wave of muscle contraction: that is peristalsis.');sfx.ok();await wait(700);r()}}));
+  el.append(h('<p class="q" style="margin:14px 0 8px">Put the whole chain of events in order.</p>'));
+  await orderGame(el,{topic:T8,steps:['Insoluble fiber stays intact and adds bulk to stool','Bulky stool presses harder against the colon walls','The pressure signals smooth muscles to contract (peristalsis)','Stool keeps moving, which prevents constipation']});
+  doneBar(el,'Benefit three, explained: bulk leads to pressure, pressure triggers peristalsis, and peristalsis prevents constipation.',next,'Finish job')}
+]});
+
+/* ===== Dispatch Desk, Smarty Plants, Mission Debrief, boot ===== */
+const CASES=[
+ {no:'Work order 101',face:'maya',alt:'Maya, a tired student slumped over a bowl of sugary cereal',who:'Maya, 10th grade',topic:T6,crew:'s',text:'“I eat a bowl of sugary cereal at 7:00. By second hour I am shaky, starving and falling asleep on my desk.”',
+  viz:`<svg viewBox="0 0 260 130"><rect width="260" height="130" rx="10" fill="#fff" stroke="#12263f" stroke-width="2"/><text x="12" y="20" font-size="12" font-weight="700">Maya’s blood sugar</text><line x1="20" x2="245" y1="48" y2="48" stroke="#c93a3a" stroke-dasharray="5 4"/><text x="245" y="43" text-anchor="end" font-size="10" fill="#c93a3a">spike zone</text><path d="M20 96C40 96 46 30 70 30S96 112 130 112s40-18 115-18" fill="none" stroke="#12263f" stroke-width="4"/><text x="20" y="124" font-size="10">7:00</text><text x="120" y="124" font-size="10">2nd hour</text></svg>`,
+  ask:'Maya needs steadier energy all morning. Which crew member do you send?',foods:['oats','apples','beans','wheat','nuts','peels'],good:['oats','apples','beans'],
+  chain:['Soluble fiber dissolves and becomes a gel','The gel slows digestion','Glucose enters the blood gradually','Blood sugar and insulin spikes are kept in check']},
+ {no:'Work order 102',face:'joe',alt:'Grandpa Joe, looking worried as he holds his lab report',who:'Grandpa Joe, age 68',topic:T7,crew:'s',text:'“My doctor says there is too much cholesterol in my blood, and heart disease runs in the family. Can food do anything about that?”',
+  viz:`<svg viewBox="0 0 260 130"><rect width="260" height="130" rx="10" fill="#fff" stroke="#12263f" stroke-width="2"/><text x="12" y="22" font-size="12" font-weight="700">Blood cholesterol</text><rect x="20" y="54" width="73" height="26" fill="#bfe6c9"/><rect x="93" y="54" width="73" height="26" fill="#fbe7a1"/><rect x="166" y="54" width="74" height="26" fill="#f6b8b0"/><rect x="20" y="54" width="220" height="26" fill="none" stroke="#12263f" stroke-width="2"/><text x="56" y="98" text-anchor="middle" font-size="10">healthy</text><text x="130" y="98" text-anchor="middle" font-size="10">borderline</text><text x="203" y="98" text-anchor="middle" font-size="10">high</text><path d="M212 36l8 16 8-16z" fill="#12263f"/><text x="220" y="32" text-anchor="middle" font-size="11" font-weight="700">Joe</text></svg>`,
+  ask:'Joe needs cholesterol pulled out of his blood. Which crew member do you send?',foods:['citrus','peas','oats','seeds','potato','wheat'],good:['citrus','peas','oats'],
+  chain:['Soluble fiber dissolves into a sticky gel','The gel binds cholesterol','Cholesterol is pulled out of the blood','The risk of heart disease goes down']},
+ {no:'Work order 103',face:'devon',alt:'Devon, a runner in a warm-up jacket holding his stomach',who:'Devon, cross country runner',topic:T8,crew:'i',text:'“We have been on the road for meets all week. Nothing but cheese pizza and white bread. I have not been able to go to the bathroom in four days.”',
+  viz:`<svg viewBox="0 0 260 130"><rect width="260" height="130" rx="10" fill="#fff" stroke="#12263f" stroke-width="2"/><text x="12" y="22" font-size="12" font-weight="700">Devon’s bathroom log</text>${['M','T','W','Th','F'].map((d,i)=>`<rect x="${20+i*46}" y="40" width="38" height="50" rx="6" fill="${i?'#fde4e1':'#dff5e6'}" stroke="#12263f" stroke-width="2"/><text x="${39+i*46}" y="58" text-anchor="middle" font-size="11" font-weight="700">${d}</text>${i?`<path d="M${31+i*46} 66l16 16M${47+i*46} 66l-16 16" stroke="#c93a3a" stroke-width="3.5" stroke-linecap="round"/>`:`<path d="M${30+i*46} 75l6 6 12-13" fill="none" stroke="#1f8a4c" stroke-width="3.5" stroke-linecap="round"/>`}`).join('')}<text x="130" y="112" text-anchor="middle" font-size="11">4 days with no bowel movement</text></svg>`,
+  ask:'Devon is constipated. Which crew member do you send?',foods:['wheat','nuts','potato','oats','apples','citrus'],good:['wheat','nuts','potato'],
+  chain:['Insoluble fiber stays intact and adds bulk to stool','Bulkier stool puts more pressure on the colon walls','Smooth muscles contract: peristalsis','Stool moves along and constipation is relieved']}];
+M.push({id:'dispatch',level:3,kind:'Case files · Data · Explain',title:'Dispatch Desk',blurb:'Real people, real problems. Read the chart, send the right crew member, and explain how the fix works.',art:'<img src="img/card-van.webp" alt="">',bg:'#ffe8da',steps:[
+...CASES.map((k,ci)=>async(el,next)=>{el.append(h(`<div class="ticket"><div class="cust"><img src="img/cust-${k.face}.webp" alt="${k.alt}"></div><div class="t"><span class="no">${k.no}</span><h3>${k.who}</h3><p style="margin-top:6px">${k.text}</p></div><div class="viz">${k.viz}</div></div>`));
+  await pick(el,{topic:k.topic,q:k.ask,opts:[`<span style="display:flex;gap:10px;align-items:center"><span style="width:54px;flex:none">${A.sponge}</span>The sponge: soluble fiber</span>`,`<span style="display:flex;gap:10px;align-items:center"><span style="width:54px;flex:none">${A.broom}</span>The broom: insoluble fiber</span>`,'Neither. Fiber is not digested, so it cannot help here.'],a:k.crew==='s'?0:1,why:k.crew==='s'?'The sponge is on the job.':'The broom is on the job.'});
+  const lp=h(`<div class="panel" style="margin-top:14px"><p class="q">Load the van. Tap the 2 foods that carry ${k.crew==='s'?'soluble':'insoluble'} fiber.</p><div class="tray" style="border:0"></div></div>`);el.append(lp);const names={oats:'Oats',apples:'Apples',beans:'Beans',wheat:'Whole wheat',nuts:'Nuts',peels:'Peels',citrus:'Citrus',peas:'Peas',seeds:'Seeds',potato:'Potato skins'};
+  await new Promise(r=>{let got=0,miss=false;shuffle(k.foods).forEach(f=>{const b=h(`<button class="chip">${A.food[f]}${names[f]}</button>`);b.onclick=()=>{if(k.good.includes(f)){mark(!miss,T5);miss=false;b.classList.add('ok');b.disabled=true;got++;fb(lp,true,`${names[f]} loaded.`);if(got===2){$$('.chip',lp).forEach(x=>x.disabled=true);r()}}else{miss=true;sfx.no();nudge(b);b.disabled=true;b.style.opacity=.4;fb(lp,false,`${names[f]} feed the ${k.crew==='s'?'broom':'sponge'}, not the crew member you sent.`)}};$('.tray',lp).append(b)})});
+  el.append(h(`<p class="q" style="margin:14px 0 8px">Write the report. Tap the steps in order to explain how this helps ${k.who.split(',')[0]}.</p>`));
+  await orderGame(el,{topic:k.topic,steps:k.chain});
+  doneBar(el,`Case closed. You did not just pick a fiber, you explained the mechanism.`,next,ci<CASES.length-1?'Next work order':'One last customer')}),
+async(el,next)=>{el.append(h(`<div class="ticket" style="border-left-color:var(--carolina)"><div class="t"><span class="no">Work order 104</span><h3>One skeptical customer</h3><p style="margin-top:6px">“Fiber has zero calories and my body cannot even digest it. So why should I bother eating it?”</p></div><div class="viz" style="width:120px">${pic('bran-sulking')}</div></div>`));
+  brief(el,'Set the record straight','Build your reply. Tap the 3 statements that are true and would actually convince this customer.','broomThink');
+  const ST=shuffle([[1,'Humans lack the enzyme to break fiber’s β-glycosidic bonds, which is why it adds zero calories.'],[1,'Soluble fiber slows digestion and binds cholesterol on its way through.'],[1,'Insoluble fiber adds bulk, which triggers peristalsis and prevents constipation.'],[0,'Fiber is absorbed in the small intestine and stored in the liver as glycogen.','Fiber is never absorbed. It travels through the stomach and small intestine fully intact.'],[0,'Gram for gram, fiber gives you more energy than starch does.','Fiber contributes zero calories. Starch is the one we digest for energy.'],[0,'Since it is never digested, fiber passes through without doing anything.','It is not digested, but like a cleaning crew it does important work on the way through.']]);
+  const p=h('<div class="opts" style="grid-template-columns:1fr"></div>');el.append(p);
+  await new Promise(r=>{let got=0,miss=false;ST.forEach(s=>{const b=h(`<button class="opt">${s[1]}</button>`);b.onclick=()=>{if(s[0]){mark(!miss,T9);miss=false;b.classList.add('ok');b.disabled=true;fb(el,true,'True, and convincing.');if(++got===3){$$('.opt',p).forEach(x=>x.disabled=true);r()}}else{miss=true;sfx.no();b.classList.add('no');b.disabled=true;nudge(b);fb(el,false,s[2])}};p.append(b)})});
+  doneBar(el,'Customer convinced. Not digestible does not mean not useful: fiber is the cleaning crew your body cannot do without.',next,'Finish job')}
+]});
+
+/* ---------- M8: Smarty Plants ---------- */
+const CLUES=[
+ ['Cellulose',T2,'I am built to hold things up, not to be burned for fuel.','My chains are straight, rigid and unbranched. They stack like steel beams.','You will find me in the cell wall of every plant.','My glucose units are joined by β-glycosidic bonds that human enzymes cannot break.','I am what scientists call dietary fiber.'],
+ ['Glycogen',T2,'I am an energy savings account, but you will never find me in a plant.','My shape allows for a very rapid release of glucose.','I am highly branched, like a dense bush.','I am stored in your liver and skeletal muscles.','I am how animals store energy, and my name starts with “glyco.”'],
+ ['Starch',T2,'I can be coiled, and I come in a branched form and an unbranched form.','Human enzymes snap my bonds apart like loosely connected Lego bricks.','My two forms are called amylose and amylopectin.','I am how plants store energy.','Potatoes, grains and roots are packed with me.'],
+ ['Soluble fiber',T4,'My stickiness lowers the risk of heart disease.','I slow digestion, which helps regulate blood sugar and insulin spikes.','I bind cholesterol and pull it out of the blood.','Oats, peas, beans, apples and citrus are full of me.','Put me in water and I dissolve into a gel. My nickname is the sponge.'],
+ ['Insoluble fiber',T4,'I increase the pressure against the walls of your colon.','I add bulk and mass to your stool.','Whole wheat, nuts, seeds, potato skins and peels are full of me.','I am the key to preventing constipation.','I do not dissolve in water. My nickname is the broom.'],
+ ['Peristalsis',T8,'I am a process, not a substance, and smooth muscle does all of my work.','Pressure against the walls of the colon is the signal that starts me.','Insoluble fiber triggers me by adding bulk to stool.','When I am working well, constipation is prevented.','I am the muscle contractions in the colon wall that keep things moving.'],
+ ['Glycosidic bond',T3,'I come in an alpha version and a beta version.','I form when water is removed from between two neighbors.','Which way I am oriented decides whether a human can digest a carbohydrate.','In the Lego analogy, I am the connection between the bricks.','I am the bond that links one sugar to the next.'],
+ ['Dehydration synthesis',T3,'Every time I happen, one water molecule is released.','I am how small molecules get built into bigger ones.','No polysaccharide can form without me.','I create glycosidic bonds between neighboring sugars.','My name means building something by removing water.'],
+ ['Glucose',T1,'Starch, glycogen and cellulose look different, but all three are made of only me.','Glycogen’s branches exist so I can be released quickly.','Soluble fiber slows how fast I enter your blood.','I am a single sugar unit: one Lego brick of a polysaccharide.','When people say blood sugar, they are talking about me.'],
+ ['Cholesterol',T7,'Too much of me in the blood raises the risk of heart disease.','I am not a fiber, but one kind of fiber is known for removing me.','The gel made by soluble fiber is sticky enough to grab me.','The sponge pulls me out of the blood.','My name starts with a C, and soluble fiber binds me.'],
+ ['Enzyme',T3,'I am a specialized tool, and I only fit certain bonds.','Humans have the version of me for starch but lack the version for cellulose.','I snap α-glycosidic bonds apart with ease.','Without me, a polysaccharide cannot be digested.','In the Lego analogy, I am what pulls the bricks apart.'],
+ ['Oats',T5,'I am a food, and I play for the sponge’s team.','The fiber in me turns into a gel inside you.','Eating me at breakfast helps prevent a blood sugar spike.','I am a grain, yet I am listed with peas, beans, apples and citrus instead of with whole wheat.','I am the main ingredient in oatmeal.']];
+M.push({id:'smarty',level:0,kind:'Clue game · Whole unit',title:'Smarty Plants',blurb:'Who am I? Clues start hard and get easier. The sooner you know it, the more points you bank.',art:A.plant,bg:'#d9f0d0',steps:[
+(el,next)=>{brief(el,'Smarty Plants','Six mystery answers. Each starts with a 5-point clue. Guess whenever you are sure, or reveal an easier clue for fewer points. A wrong guess burns a clue.','plant');
+  const R=shuffle(CLUES).slice(0,6),bankNames=CLUES.map(c=>c[0]).sort();let ri=0,total=0;const w=h('<div></div>');el.append(w);
+  const round=()=>{if(ri>=R.length){w.innerHTML=`<div class="panel center"><p class="q">You banked ${total} of 30 clue points.</p></div>`;cur.bonus+=total*6;doneBar(el,total>=24?'Certified Smarty Plant. You knew most of these from the hardest clues.':'Nice work. Replay to see different mystery answers and bank more points.',next,'Finish job');return}
+    const r=R[ri];let shown=1,first=true,marked=false,over=false;
+    w.innerHTML=`<div class="center" style="justify-content:space-between;margin-bottom:10px"><p class="q">Mystery ${ri+1} of 6: Who am I?</p><span class="score">Banked: ${total} points</span></div><div class="clues"></div><div class="center" style="margin-top:12px"><button class="btn sm ghost" id="more">Show an easier clue (lose 1 point)</button></div><div class="bank"></div>`;
+    const cl=$('.clues',w),drawClues=()=>{cl.innerHTML=[0,1,2,3,4].map(i=>i<shown?`<div class="clue"><span class="pts">${5-i}</span><span>${r[2+i]}</span></div>`:`<div class="clue lock"><span class="pts">${5-i}</span><span>Hidden clue</span></div>`).join('');$('#more',w).disabled=shown>=5||over;live(r[1+shown])};
+    const endRound=(pts,msg,ok)=>{over=true;total+=pts;$$('.bank .opt',w).forEach(b=>b.disabled=true);$('#more',w).disabled=true;fb(w,ok,msg);if(ok&&pts>=4)bubbles(12);const b=h(`<div class="center" style="margin-top:12px"><button class="btn">${ri<R.length-1?'Next mystery':'See my total'}</button></div>`);w.append(b);$('button',b).onclick=()=>{ri++;round()};$('button',b).focus({preventScroll:true})};
+    $('#more',w).onclick=()=>{if(shown<5){shown++;sfx.click();drawClues()}};
+    bankNames.forEach(n=>{const b=h(`<button class="opt">${n}</button>`);b.onclick=()=>{if(over)return;if(n===r[0]){if(!marked)mark(true,r[1]);else sfx.ok();b.classList.add('ok');endRound(6-shown,`Yes! ${r[0]}. You banked ${6-shown} point${6-shown===1?'':'s'}.`,true)}else{if(!marked){marked=true;mark(false,r[1])}else sfx.no();b.disabled=true;nudge(b);if(shown>=5)endRound(0,`Out of clues. The answer was ${r[0]}.`,false);else{shown++;drawClues();fb(w,false,`Not ${n}. Here is an easier clue.`)}}};$('.bank',w).append(b)});drawClues()};round()}
+]});
+
+/* ---------- Mission Debrief (evidence of completion) ---------- */
+const LV=[[1,'Level 1 · Emerging','I can describe what fiber is, and explain how it is different from other types of polysaccharides such as starch or glycogen.'],[2,'Level 2 · Proficient','Additionally, I can differentiate between soluble and insoluble fiber.'],[3,'Level 3 · Advanced','Additionally, I can describe the benefits of dietary fiber as I explain their role in maintaining proper health.']];
+function levelStatus(l){const ms=M.filter(m=>m.level===l),d=ms.map(m=>S.m[m.id]).filter(Boolean);if(!d.length)return['z','Not started',0];const avg=Math.round(d.reduce((a,x)=>a+x.pct,0)/d.length);return d.length===ms.length&&avg>=80?['y','Demonstrated',avg]:['n',d.length<ms.length?`In progress (${d.length} of ${ms.length} jobs)`:'Keep practicing',avg]}
+function insights(){const st=[],fo=[];Object.keys(TOPICS).forEach(t=>{const v=S.topics[t];if(!v||v[1]<3)return;const p=v[0]/v[1];if(p>=.85)st.push([t,p]);else if(p<.7)fo.push([t,p])});st.sort((a,b)=>b[1]-a[1]);fo.sort((a,b)=>a[1]-b[1]);const f=a=>a.slice(0,6).map(x=>`${x[0]} (Level ${TOPICS[x[0]]})`);return{st:f(st),fo:f(fo)}}
+function wrap(c,text,x,y,maxW,lh,maxLines=99){const words=String(text).split(/\s+/);let line='',n=0;for(const wd of words){const t=line?line+' '+wd:wd;if(c.measureText(t).width>maxW&&line){c.fillText(line,x,y);y+=lh;n++;line=wd;if(n>=maxLines-1){while(c.measureText(line+'…').width>maxW)line=line.slice(0,-1)}}else line=t}if(line){c.fillText(line,x,y);y+=lh}return y}
+function drawEvidence(){const cv=$('#evc'),c=cv.getContext('2d'),W=1000,H=1300,ink='#12263f';c.fillStyle='#fff';c.fillRect(0,0,W,H);c.fillStyle=ink;c.fillRect(0,0,W,150);c.fillStyle='#f7c531';c.fillRect(0,150,W,10);
+  c.fillStyle='#fff';c.font='400 54px \"Titan One\",\"Arial Black\",'+CF;c.fillText('Mission: Indigestible',40,72);c.font='700 22px '+CF;c.fillStyle='#bfe1f7';c.fillText('MISSION DEBRIEF  ·  Food & Exercise Science  ·  Standard 3.5 Dietary Fiber',40,112);
+  const r=rank();c.textAlign='right';c.fillStyle='#f7c531';c.font='400 30px \"Titan One\",\"Arial Black\",'+CF;c.fillText(r.name,W-40,66);c.fillStyle='#fff';c.font='700 20px '+CF;c.fillText(shine()+' shine',W-40,98);c.textAlign='left';
+  c.fillStyle=ink;c.font='700 34px '+CF;c.fillText(S.name||'Recruit',40,212);c.font='20px '+CF;c.fillStyle='#3d5370';c.fillText('Completed '+new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}),40,244);
+  c.font='italic 19px '+CF;let y=wrap(c,'“I can differentiate between soluble and insoluble fiber, and explain their role in maintaining proper health.”',40,280,920,26)+14;
+  LV.forEach(l=>{const st=levelStatus(l[0]),col=st[0]==='y'?'#1f8a4c':st[0]==='n'?'#a87400':'#7c8ea3';c.fillStyle='#eef6fc';c.fillRect(40,y,920,44);c.fillStyle=ink;c.font='700 23px '+CF;c.fillText(l[1],54,y+30);c.textAlign='right';c.fillStyle=col;c.fillText(st[1]+(st[2]?'  ·  '+st[2]+'%':''),946,y+30);c.textAlign='left';y+=68;
+    c.fillStyle='#3d5370';c.font='17px '+CF;y=wrap(c,l[2],54,y,890,23)+6;
+    M.filter(m=>m.level===l[0]).forEach(m=>{const d=S.m[m.id];c.fillStyle=ink;c.font='700 19px '+CF;c.fillText(m.title,70,y+6);c.font='19px '+CF;c.fillStyle=d?ink:'#7c8ea3';c.textAlign='right';c.fillText(d?`best ${d.pct}%   ${'★'.repeat(d.stars)}${'☆'.repeat(3-d.stars)}   ${d.plays} play${d.plays===1?'':'s'}`:'not played yet',946,y+6);c.textAlign='left';y+=30});y+=14});
+  const sm=S.m.smarty;c.fillStyle='#e4f4df';c.fillRect(40,y,920,44);c.fillStyle=ink;c.font='700 21px '+CF;c.fillText('Final review · Smarty Plants',54,y+29);c.textAlign='right';c.fillText(sm?`best ${sm.pct}%   ${'★'.repeat(sm.stars)}${'☆'.repeat(3-sm.stars)}`:'not played yet',946,y+29);c.textAlign='left';y+=74;
+  const {st,fo}=insights();const col=(title,list,empty,x,color)=>{c.fillStyle=color;c.font='700 21px '+CF;c.fillText(title,x,y);let yy=y+30;c.fillStyle=ink;c.font='18px '+CF;if(!list.length){c.fillStyle='#3d5370';yy=wrap(c,empty,x,yy,430,24)}list.forEach(t=>{c.fillText('•  '+t,x,yy);yy+=26});return yy};
+  const y1=col('Big strengths',st,'Play more jobs to reveal your strengths.',40,'#1f8a4c'),y2=col('Focus on these first while studying',fo,st.length?'No weak spots found yet. Keep it up!':'Play more jobs to find out what to study.',520,'#c2571a');y=Math.max(y1,y2)+16;
+  if(S.reflect&&S.reflect.trim()&&y<H-120){c.fillStyle=ink;c.font='700 21px '+CF;c.fillText('My reflection',40,y);c.font='18px '+CF;c.fillStyle='#3d5370';wrap(c,S.reflect.trim(),40,y+28,920,24,Math.max(1,Math.floor((H-70-y-28)/24)))}
+  c.fillStyle='#eef6fc';c.fillRect(0,H-44,W,44);c.fillStyle='#3d5370';c.font='15px '+CF;c.fillText('Scores show each job’s best run and the share of answers that were right on the first try.',40,H-17)}
+function pdfBlob(cv){const jpg=atob(cv.toDataURL('image/jpeg',.92).split(',')[1]),W=612,H=792,ih=752,iw=+(ih*cv.width/cv.height).toFixed(1),x=+((W-iw)/2).toFixed(1),parts=[],offs=[];let len=0;const add=s=>{parts.push(s);len+=s.length};
+  add('%PDF-1.4\n');const obj=s=>{offs.push(len);add(`${offs.length} 0 obj\n${s}\nendobj\n`)};const cs=`q ${iw} 0 0 ${ih} ${x} 20 cm /Im0 Do Q`;
+  obj('<</Type/Catalog/Pages 2 0 R>>');obj('<</Type/Pages/Kids[3 0 R]/Count 1>>');obj(`<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${W} ${H}]/Resources<</XObject<</Im0 5 0 R>>>>/Contents 4 0 R>>`);obj(`<</Length ${cs.length}>>\nstream\n${cs}\nendstream`);
+  obj(`<</Type/XObject/Subtype/Image/Width ${cv.width}/Height ${cv.height}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${jpg.length}>>\nstream\n${jpg}\nendstream`);
+  const xr=len;add(`xref\n0 6\n0000000000 65535 f \n${offs.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')}trailer\n<</Size 6/Root 1 0 R>>\nstartxref\n${xr}\n%%EOF`);
+  const s=parts.join(''),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return new Blob([u],{type:'application/pdf'})}
+async function saveFile(name,blob){const note=$('#dlnote');try{if(window.claude&&window.claude.use){const d=await window.claude.use('downloads');if(d){await d.save({filename:name,data:blob});note.textContent='Saved. Turn it in or add it to your portfolio.';return}}}catch(e){if(e&&e.code==='declined'){note.textContent='Download canceled.';return}}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);note.textContent='Check your Downloads folder for '+name+'.'}catch(e){note.textContent='The download was blocked here. Take a screenshot of the debrief instead.'}}
+function debrief(){hud();const fn=(S.name||'recruit').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'recruit',played=Object.keys(S.m).length;
+  $('#debrief').innerHTML=`<div class="mhead"><button class="btn ghost sm" id="dback">Back to HQ</button><h1>Mission Debrief</h1></div><div class="evi"><div><canvas id="evc" width="1000" height="1300" role="img" aria-label="Your mission debrief: levels, best scores, strengths and focus areas"></canvas></div>
+   <div><div class="panel"><h2 style="font-size:1.4rem;margin-bottom:8px">Your evidence of learning</h2><p>${played?`You have finished ${played} of ${M.length} jobs.`:'You have not finished a job yet. Play at least one, then come back.'} This page updates every time you improve a score.</p>
+   ${LV.map(l=>{const s=levelStatus(l[0]);return `<div class="lvlrow"><b>${l[1]}</b><span class="tagp ${s[0]}">${s[1]}</span></div>`}).join('')}
+   <label for="refl" style="display:block;font-weight:700;margin:14px 0 6px">Optional reflection for your portfolio</label><p class="note" style="margin-bottom:6px">How does this debrief show you are a Self-Directed Learner? What will you study next, and how?</p><textarea id="refl" maxlength="600">${esc(S.reflect||'')}</textarea>
+   <div class="center" style="margin-top:14px;justify-content:flex-start"><button class="btn" id="dpng">Download picture (PNG)</button><button class="btn yellow" id="dpdf">Download PDF</button></div><p class="note" id="dlnote" role="status" style="margin-top:8px;min-height:1.5em"></p></div>
+   <div class="panel" style="margin-top:14px"><h3 style="font-size:1.1rem;margin-bottom:6px">Start over</h3><p class="note">Clears the name, stars and shine saved on this device.</p><div class="center" style="justify-content:flex-start;margin-top:8px"><button class="btn ghost sm" id="reset">Clear my progress</button><button class="btn sm orange" id="reset2" hidden>Yes, erase everything</button></div></div></div></div>`;
+  show('debrief');const paint=()=>drawEvidence();paint();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(paint);
+  $('#dback').onclick=hq;$('#refl').oninput=e=>{S.reflect=e.target.value;save();paint()};
+  $('#dpng').onclick=()=>$('#evc').toBlob(b=>saveFile(`fiber-mission-debrief-${fn}.png`,b),'image/png');$('#dpdf').onclick=()=>saveFile(`fiber-mission-debrief-${fn}.pdf`,pdfBlob($('#evc')));
+  $('#reset').onclick=()=>{$('#reset2').hidden=false;$('#reset2').focus()};$('#reset2').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}S={name:'',m:{},topics:{},reflect:'',set:S.set};save();welcome();show('welcome')}}
+
+/* ---------- boot ---------- */
+function start(){buildA11y();applySet();$('#homeBtn').onclick=()=>S.name?hq():show('welcome');$('#a11yBtn').onclick=()=>toggleA11y();$('#snd').onclick=()=>{S.set.sound=!S.set.sound;applySet();sfx.ok()};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#a11y').classList.contains('on'))toggleA11y(false)});welcome();if(S.name)hq();else show('welcome')}
+start();
+
+
+</script>
+</body>
+</html>
