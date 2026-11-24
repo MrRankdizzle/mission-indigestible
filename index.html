@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mission: Indigestible</title>
-<link rel="icon" href="img/lc-logo.webp">
+<link rel="icon" href="img/crew-mark.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;700&family=Titan+One&display=swap" rel="stylesheet">
@@ -48,8 +48,9 @@ svg{display:block}
 html.hc #bar{background:#000}
 
 #bar,main,#a11y,#foot{zoom:var(--z,1)}
-main{max-width:1280px;margin:0 auto;padding:16px 18px 22px;min-height:calc(100vh/var(--z,1) - 150px)}
-#bar .lc{background:#fff;border-radius:10px;padding:4px 7px;display:flex}#bar .lc img{height:34px;width:auto;display:block}
+main{container-type:inline-size;max-width:1280px;margin:0 auto;padding:16px 18px 22px;min-height:calc(100vh/var(--z,1) - 150px)}
+#bar .mark{height:52px;width:auto;display:block;margin:-8px 0 -8px -4px;transition:transform .25s}
+#bar .logo:hover .mark{transform:rotate(-8deg) scale(1.12)}
 #bar #debBtn{white-space:nowrap}
 #foot{background:var(--ink);color:#fff;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 22px;font-size:.88rem}
 #foot img{height:38px;width:auto;background:#fff;border-radius:10px;padding:4px 7px}
@@ -114,27 +115,33 @@ main{max-width:1280px;margin:0 auto;padding:16px 18px 22px;min-height:calc(100vh
 .rank b{font-family:var(--display);font-weight:400;font-size:1.05rem;color:var(--sponge);display:block;line-height:1.1}
 .meter{height:8px;background:#31517a;border-radius:9px;overflow:hidden;width:150px;margin-top:4px}
 .meter i{display:block;height:100%;background:var(--sponge);border-radius:9px;transition:width .6s}
+/* Job board. Four level columns when there is room, a 2-by-2 block when there is not, one column on a phone.
+   Each level is a two-row subgrid (heading, jobs) so headings in the same row always line up, and every job card
+   sizes its picture and title from its own width, so nothing overflows whatever the window or font. */
 .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.floor{border-radius:20px;padding:10px 12px 12px;border:3px solid var(--ink);background:var(--card);position:relative}
+.floor{display:grid;grid-template-rows:subgrid;grid-row:span 2;row-gap:10px;border-radius:20px;padding:12px;border:3px solid var(--ink);background:var(--card);min-width:0}
 .floor.l1{background:#e3f2fc} .floor.l2{background:#fff6d6} .floor.l3{background:#ffe8da} .floor.l0{background:#e4f4df}
 html.hc .floor{background:#fff}
-.floor-h{margin-bottom:8px;min-height:6.6em}
+.floor-h{min-width:0}
 .lvl{display:inline-block;font-family:var(--display);background:var(--ink);color:#fff;border-radius:12px;padding:6px 12px;font-size:1rem;white-space:nowrap}
 .lvl small{font-family:var(--body);font-weight:700;color:var(--sponge);margin-left:6px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
 .ican{font-size:.82rem;line-height:1.35;margin-top:8px}
-.mlist{display:grid;gap:11px}
-.mcard{width:100%;height:106px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px;text-align:left;display:flex;align-items:center;gap:10px;box-shadow:0 5px 0 var(--ink);transition:transform .15s,box-shadow .15s;position:relative}
+.mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px;align-content:start;min-width:0}
+.mcard{container-type:inline-size;width:100%;min-width:0;height:108px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:0;text-align:left;box-shadow:0 5px 0 var(--ink);transition:transform .15s,box-shadow .15s;position:relative;display:block}
 .mcard:hover{transform:translateY(-3px) rotate(-.6deg);box-shadow:0 8px 0 var(--ink)}
-.mcard .art{width:80px;height:80px;flex:none;border-radius:14px;background:var(--sky);display:flex;align-items:center;justify-content:center;gap:2px;overflow:hidden;padding:5px}
+.mcard .in{display:flex;align-items:center;gap:10px;height:100%;padding:9px 10px}
+.mcard .art{width:clamp(58px,30cqi,84px);height:clamp(58px,30cqi,84px);flex:none;border-radius:14px;background:var(--sky);display:flex;align-items:center;justify-content:center;gap:2px;overflow:hidden;padding:5px}
 .mcard .art :is(svg,img){max-width:100%;max-height:100%;width:auto;height:auto;min-width:0;flex:0 1 auto;object-fit:contain}
 .mcard .art svg{width:100%;height:100%}
 .mcard:hover .art :is(svg,img){animation:wig .6s ease-in-out}
 @keyframes wig{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg) scale(1.08)}65%{transform:rotate(7deg) scale(1.08)}}
-.mtxt{display:flex;flex-direction:column;gap:4px;min-width:0}
-.mcard h3{font-size:1.05rem}
+.mtxt{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.mcard h3{font-size:clamp(.8rem,6cqi,1.1rem);line-height:1.08;overflow-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@container (max-width:1040px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container (max-width:560px){.board{grid-template-columns:minmax(0,1fr)}}
 .stars{display:flex;gap:3px} .stars svg{width:20px;height:20px}
 .mcard .done{position:absolute;top:-10px;right:-6px;background:var(--good);color:#fff;border-radius:99px;font-size:.75rem;font-weight:700;padding:4px 10px;border:3px solid var(--ink);transform:rotate(6deg)}
-.mcard .kind{font-size:.62rem;line-height:1.2;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--carolina)}
+.mcard .kind{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.62rem;line-height:1.2;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--carolina)}
 
 /* ---------- mission stage ---------- */
 .mhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
@@ -369,14 +376,13 @@ textarea{width:100%;min-height:110px;font:inherit;border:3px solid var(--ink);bo
 
 html.calm *,html.calm *::before,html.calm *::after{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}
 @media (prefers-reduced-motion:reduce){.hero .floaty,.bead,.hero .duo img,.brief .who img,.cheer img{animation:none}}
-@media(max-width:1000px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}.floor-h{min-height:0}}
-@media(max-width:560px){.board{grid-template-columns:1fr}#bar .pill{display:none}}
+@media(max-width:700px){#bar .pill{display:none}}
 @media(max-width:640px){.hero-in{padding:20px}.hero .duo img{width:84px;height:84px}.brief .who{display:none}.hq-top::before{background:rgba(18,38,63,.85)}}
 
 </style>
 </head>
 <body>
-<header id="bar"><button class="logo" id="homeBtn" aria-label="Go to Crew HQ"><span class="lc"><img src="img/lc-logo.webp" alt="Little Chute High School"></span><b>Mission: <i>Indigestible</i></b></button><span class="sp"></span><span class="pill">Crew member <b id="who">Recruit</b></span><span class="pill">Shine <b id="shine">0</b></span><button class="btn yellow sm" id="debBtn">Mission Debrief</button><button class="ib" id="menuBtn" aria-expanded="false" aria-controls="a11y"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>Menu</span></button></header>
+<header id="bar"><button class="logo" id="homeBtn" aria-label="Go to Crew HQ"><img class="mark" src="img/crew-mark.webp" alt=""><b>Mission: <i>Indigestible</i></b></button><span class="sp"></span><span class="pill">Crew member <b id="who">Recruit</b></span><span class="pill">Shine <b id="shine">0</b></span><button class="btn yellow sm" id="debBtn">Mission Debrief</button><button class="ib" id="menuBtn" aria-expanded="false" aria-controls="a11y"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>Menu</span></button></header>
 <main>
 <section class="screen" id="welcome"></section>
 <section class="screen" id="hq"></section>
@@ -515,7 +521,7 @@ function welcome(){const w=$('#welcome');new Image().src='img/door.webp';
 
 function hq(){hud();const r=rank(),L=[[1,'Emerging','I can describe what fiber is, and explain how it is different from other types of polysaccharides such as starch or glycogen.'],[2,'Proficient','Additionally, I can differentiate between soluble and insoluble fiber.'],[3,'Advanced','Additionally, I can describe the benefits of dietary fiber as I explain their role in maintaining proper health.'],[0,'All levels','Put it all together before the exam. Fewer clues means more points.']];
   $('#hq').innerHTML=`<div class="hq-top" style="background-image:url(img/hq.webp)"><div class="hq-row"><h1>Crew HQ</h1><div class="rank">${A.logo.replace('width="40" height="40"','')}<div><span style="font-size:.75rem">Crew rank</span><b>${r.name}</b><div class="meter" role="img" aria-label="${r.pct}% to next rank"><i style="width:${r.pct}%"></i></div></div></div></div><p class="who">Welcome to the night shift, <b>${esc(S.name)}</b>. Pick any job on the board. Your shine and stars are saved on this device.</p></div>
-   <div class="board">${L.map(l=>`<section class="floor l${l[0]}"><div class="floor-h"><span class="lvl">${l[0]?'Level '+l[0]:'Final review'}<small>${l[1]}</small></span><p class="ican">${l[2]}</p></div><div class="mlist">${M.filter(m=>m.level===l[0]).map(m=>{const d=S.m[m.id];return `<button class="mcard" data-m="${m.id}" title="${esc(m.blurb)}"><span class="art" style="background:${m.bg||'var(--sky)'}">${m.art}</span><span class="mtxt"><span class="kind">${m.kind}</span><h3>${m.title}</h3><span class="stars" aria-label="${d?d.stars:0} of 3 stars">${[1,2,3].map(i=>A.star(d&&d.stars>=i)).join('')}</span></span>${d?`<span class="done">Best ${d.pct}%</span>`:''}</button>`}).join('')}</div></section>`).join('')}</div>`;
+   <div class="board">${L.map(l=>`<section class="floor l${l[0]}"><div class="floor-h"><span class="lvl">${l[0]?'Level '+l[0]:'Final review'}<small>${l[1]}</small></span><p class="ican">${l[2]}</p></div><div class="mlist">${M.filter(m=>m.level===l[0]).map(m=>{const d=S.m[m.id];return `<button class="mcard" data-m="${m.id}" title="${esc(m.blurb)}"><span class="in"><span class="art" style="background:${m.bg||'var(--sky)'}">${m.art}</span><span class="mtxt"><span class="kind">${m.kind}</span><h3>${m.title}</h3><span class="stars" aria-label="${d?d.stars:0} of 3 stars">${[1,2,3].map(i=>A.star(d&&d.stars>=i)).join('')}</span></span></span>${d?`<span class="done">Best ${d.pct}%</span>`:''}</button>`}).join('')}</div></section>`).join('')}</div>`;
   $$('.mcard').forEach(b=>b.onclick=()=>{sfx.click();runMission(b.dataset.m)});show('hq')}
 
 /* ---------- mission runner ---------- */
@@ -601,7 +607,7 @@ async(el,next)=>{el.append(h(`<div class="panel" style="padding:0;overflow:hidde
 ]});
 
 /* ---------- M2: The Lineup ---------- */
-M.push({id:'lineup',level:1,kind:'Label · Sort · Predict',title:'The Polysaccharide Lineup',blurb:'Three suspects, all built from glucose. Only one is fiber. Tell them apart by shape and job.',art:molSVG('glycogen'),bg:'#fde3ec',steps:[
+M.push({id:'lineup',level:1,kind:'Label · Sort · Predict',title:'Polysaccharide Lineup',blurb:'Three suspects, all built from glucose. Only one is fiber. Tell them apart by shape and job.',art:molSVG('glycogen'),bg:'#fde3ec',steps:[
 async(el,next)=>{brief(el,'Name the suspects','Starch, glycogen and cellulose are all chains of glucose. The way the chain is built is the giveaway. Send each name and shape clue to the right diagram.','sponge');
   await sortGame(el,{topic:T2,items:[{html:'Starch',bin:'a'},{html:'Glycogen',bin:'b'},{html:'Cellulose (fiber)',bin:'c'},{html:'Coiled like a spring (helical)',bin:'a'},{html:'Highly branched, like a dense bush',bin:'b'},{html:'Straight, rigid chains that stack like steel beams',bin:'c'}],
     bins:[{id:'a',label:'Suspect A',art:molSVG('amylose')},{id:'b',label:'Suspect B',art:molSVG('glycogen')},{id:'c',label:'Suspect C',art:molSVG('cellulose')}]});

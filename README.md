@@ -4,7 +4,7 @@ A gamified review app for Food & Exercise Science standard 3.5 (Dietary Fiber) a
 
 Students clock in as recruits on the fiber Clean-Up Crew and work eight jobs leveled to the standard:
 
-- Level 1: Orientation Day, The Polysaccharide Lineup, Super-Glue Squad
+- Level 1: Orientation Day, Polysaccharide Lineup, Super-Glue Squad
 - Level 2: The Dynamic Duo, Go Fiber!
 - Level 3: Body Works, Dispatch Desk
 - Final review: Smarty Plants
